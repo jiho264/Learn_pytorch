@@ -1,4 +1,4 @@
-LEE, JIHO
+# LEE, JIHO
 
 - Dept. of Embedded Systems Engineering, Information Technology
 - Incheon National University, Incheon, Korea
