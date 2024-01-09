@@ -30,14 +30,14 @@
 - In CIFAR10 :
 - [x] weight decay = 0.0001 and momentum = 0.9
 - [x] adopt the weight initialization in He and BN without dropout
-- [ ] batch size = 128 on 2 GPUs
+- [x] (PASS) batch size = 128 on 2 GPUs
 - [x] learning rate = 0.1, divided by 10 at 32k and 48k iterations
   > 아니잠깐 18초씩 48k iter면 순수 train만 240시간인디..
-- [ ] total training iterations = 64k
+- [x] total training iterations = 64k
 - [x] 45k/5k = train/val set
-- [ ] 4 pixels are padded on each side, and a 32 x 32 crop is randomly sampled from the padded image or its horizontal flip
-- [ ] the per-pixel mean is subtracted from each image
-- [ ] For testing, use original images
+- [x] 4 pixels are padded on each side, and a 32 x 32 crop is randomly sampled from the padded image or its horizontal flip
+- [x] the per-pixel mean is subtracted from each image
+- [x] For testing, use original images
   > Submean 안 한거로 테스트하면 완전 학습 안 되던데??????
 ## Week 0: Summary of 2023
 - [x] Setup the Leanring Process
@@ -64,17 +64,19 @@ Test Loss: 2.0706 | Test Acc: 28.00%
   - Do not apply Img resizing on CIFAR10 cuz it have already low resolution(32x32).
   - The Apply on half submean + Apply on half submean + horizontal flip that's train time for single epoch is 25s on CIFAR10
   - The train time for single epoch is 12.06 on CIFAR10
-  
+  > transforms 들은 매 __call__마다 다시 실행되기 때문에, 랜덤 샘플링같은거 안 해도 됨.
+  > transforms 는 dataset.transform.transforms.append()로 추가 가능함.
+  > 1x1 conv에서 BN 빼면 그냥 찍는거랑 acc 똑같아져버림. 이유 잘 모르겠음.
 ****
 
 ## The Question about Working Process of ResNet
-- [ ] Why they use stride 2 in the downsample layer?
-- [x] 왜 downsampling된 블럭에선 stride=2인가?
+- [x] Why they use stride 2 in the downsample layer? 왜 downsampling된 블럭에선 stride=2인가?
   > input은 64,8,8이고 다운 샘플 이후엔 128,4,4가 되는데, 스트레치하면서 사이즈도 줄여야 하기 때문에 stride도 2임.
 - [ ] 왜 batchnorm에서 eps를 비롯한 옵션들의 설정 추가가 유효했는가? 기존엔 #value만 적었었음.
 - [ ] 왜 Adam에 LR 0.1을 주면 학습이 안되는가?
 - [ ] 왜 제일 마지막 FC에 Relu넣으면 학습 아예 안 되지?
-- [ ] final avg pooling : 7x7x512 -> 1x1x512 이게맞나? 현재 CIFAR들은 batch*512*1*1이라 확인불가.
+- [x] final avg pooling : 7x7x512 -> 1x1x512 이게맞나? 현재 CIFAR들은 batch*512*1*1이라 확인불가.
+  > pytorch가 adoptavgpool씀.
 
 ### Result Log
 - SGD
