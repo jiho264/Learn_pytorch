@@ -18,7 +18,7 @@
 - [x] we adopt batch normalization after each convolutional and before activation
 - [x] we use SGD with a mini-batch size of 256
 - [ ] the learning rate starts from 0.1 and is divided by 10 when the error plateaus
-- [ ] we use a weight decay of 0.0001 and a momentum of 0.9
+- [x] we use a weight decay of 0.0001 and a momentum of 0.9
 - [x] we do not use dropout
 ---
 - [ ] It is useful when training a classification problem with C classes. 
@@ -35,16 +35,15 @@
   - ```I can not get high accuracy```
 
 ## Week 1: First week, Jan, 2024
-- Goal : To get 15% error rate in CIFAR-10 dataset.
+- Goal : Getting 15% error rate in CIFAR-10 dataset.
 - [ ] Imaplemanation of Leaning rate Decay
 ****
 
 ## The Question about Working Process of ResNet
 - [ ] Why they use stride 2 in the downsample layer?
-- [ ] 왜 Test에서도 Submean하면 안되는가?
 - [ ] 왜 downsampling된 블럭에선 stride=2인가?
 - [ ] 왜 batchnorm에서 eps를 비롯한 옵션들의 설정 추가가 유효했는가? 기존엔 #value만 적었었음.
-- [  ]왜 Adam에 LR 0.1을 주면 학습이 안되는가?
+- [ ]왜 Adam에 LR 0.1을 주면 학습이 안되는가?
 
 
 
