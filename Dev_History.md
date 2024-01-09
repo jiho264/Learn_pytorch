@@ -69,11 +69,12 @@ Test Loss: 2.0706 | Test Acc: 28.00%
 
 ## The Question about Working Process of ResNet
 - [ ] Why they use stride 2 in the downsample layer?
-- [ ] 왜 downsampling된 블럭에선 stride=2인가?
+- [x] 왜 downsampling된 블럭에선 stride=2인가?
+  > input은 64,8,8이고 다운 샘플 이후엔 128,4,4가 되는데, 스트레치하면서 사이즈도 줄여야 하기 때문에 stride도 2임.
 - [ ] 왜 batchnorm에서 eps를 비롯한 옵션들의 설정 추가가 유효했는가? 기존엔 #value만 적었었음.
 - [ ] 왜 Adam에 LR 0.1을 주면 학습이 안되는가?
-
-
+- [ ] 왜 제일 마지막 FC에 Relu넣으면 학습 아예 안 되지?
+- [ ] final avg pooling : 7x7x512 -> 1x1x512 이게맞나? 현재 CIFAR들은 batch*512*1*1이라 확인불가.
 
 ### Result Log
 - SGD
