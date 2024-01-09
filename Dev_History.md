@@ -37,6 +37,11 @@
 ## Week 1: First week, Jan, 2024
 - Goal : Getting 15% error rate in CIFAR-10 dataset.
 - [ ] Imaplemanation of Leaning rate Decay
+- My results : 
+  - Do not apply Img resizing on CIFAR10 cuz it have already low resolution(32x32).
+  - The Apply on half submean + Apply on half submean + horizontal flip that's train time for single epoch is 25s on CIFAR10
+  - The train time for single epoch is 12.06 on CIFAR10
+  - >> The Overhead for Preprecessing is not critical.
 ****
 
 ## The Question about Working Process of ResNet
