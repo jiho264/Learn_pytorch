@@ -2,6 +2,7 @@
 - The purpose of this project is to create a ResNet32 model using Pytorch.
 - The Goal of this project is that to get the accuracy of near original paper's accuracy.
 - The Origin Model have 7.51% error rate in CIFAR-10 dataset.
+
 # The Manual from Original Paper
 ## They's Setup
 - ResNet paper :
@@ -26,6 +27,16 @@
 - [ ] This is particularly useful when you have an unbalanced training set. 
 - [ ] The input is expected to contain the unnormalized logits for each class (which do not need to be positive or sum to 1, in general).
 ---
+- In CIFAR10 :
+- [ ] weight decay = 0.0001 and momentum = 0.9
+- [ ] adopt the weight initialization in He and BN without dropout
+- [ ] batch size = 128 on 2 GPUs
+- [ ] learning rate = 0.1, divided by 10 at 32k and 48k iterations
+- [ ] total training iterations = 64k
+- [ ] 45k/5k = train/val set
+- [ ] 4 pixels are padded on each side, and a 32 x 32 crop is randomly sampled from the padded image or its horizontal flip
+- [ ] the per-pixel mean is subtracted from each image
+- [ ] For testing, use original images
 ## Week 0: Summary of 2023
 - [x] Setup the Leanring Process
 - [x] Implemantation of ResNet32 Model Structure
@@ -37,11 +48,13 @@
 ## Week 1: First week, Jan, 2024
 - Goal : Getting 15% error rate in CIFAR-10 dataset.
 - [ ] Imaplemanation of Leaning rate Decay
+- [ ] split to train/val
 - My results : 
+  > The Overhead for Preprecessing is not critical.
   - Do not apply Img resizing on CIFAR10 cuz it have already low resolution(32x32).
   - The Apply on half submean + Apply on half submean + horizontal flip that's train time for single epoch is 25s on CIFAR10
   - The train time for single epoch is 12.06 on CIFAR10
-  - >> The Overhead for Preprecessing is not critical.
+  
 ****
 
 ## The Question about Working Process of ResNet
