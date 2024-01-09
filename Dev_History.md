@@ -28,15 +28,16 @@
 - [ ] The input is expected to contain the unnormalized logits for each class (which do not need to be positive or sum to 1, in general).
 ---
 - In CIFAR10 :
-- [ ] weight decay = 0.0001 and momentum = 0.9
-- [ ] adopt the weight initialization in He and BN without dropout
+- [x] weight decay = 0.0001 and momentum = 0.9
+- [x] adopt the weight initialization in He and BN without dropout
 - [ ] batch size = 128 on 2 GPUs
-- [ ] learning rate = 0.1, divided by 10 at 32k and 48k iterations
+- [x] learning rate = 0.1, divided by 10 at 32k and 48k iterations
 - [ ] total training iterations = 64k
-- [ ] 45k/5k = train/val set
+- [x] 45k/5k = train/val set
 - [ ] 4 pixels are padded on each side, and a 32 x 32 crop is randomly sampled from the padded image or its horizontal flip
 - [ ] the per-pixel mean is subtracted from each image
 - [ ] For testing, use original images
+  > Submean 안 한거로 테스트하면 완전 학습 안 되던데??????
 ## Week 0: Summary of 2023
 - [x] Setup the Leanring Process
 - [x] Implemantation of ResNet32 Model Structure
@@ -47,8 +48,16 @@
 
 ## Week 1: First week, Jan, 2024
 - Goal : Getting 15% error rate in CIFAR-10 dataset.
-- [ ] Imaplemanation of Leaning rate Decay
-- [ ] split to train/val
+- [x] split to train/val and Imaplemanation of Leaning rate Decay (scheduling)
+```
+Epoch 4/20:
+Training time: 17.75 seconds
+Epoch 00004: reducing learning rate of group 0 to 1.0000e-02.
+Train Loss: 1.4534 | Train Acc: 46.64%
+Valid Loss: 1.4734 | Train Acc: 47.60%
+Test Loss: 2.0706 | Test Acc: 28.00%
+--------------------------------------------------
+```
 - My results : 
   > The Overhead for Preprecessing is not critical.
   - Do not apply Img resizing on CIFAR10 cuz it have already low resolution(32x32).
