@@ -21,7 +21,7 @@
   - [x] The image is resized with its shorter side randomly sampled in [256, 480] for scale augmentation [41]. 
     > CIFAR 다룰 때엔 이미 32*32이므로 skip 
   - [x] A 224×224 crop is randomly sampled from an image or its horizontal flip, with the per-pixel mean subtracted [21]. 
-  - [ ] The standard color augmentation in [21] is used.
+  - [x] The standard color augmentation in [21] is used.
     > 1. Crop + resizeing
     > 2. Principal Components Analysis (PCA 개념참고 : https://ddongwon.tistory.com/114 )
     >> 근데 ImageNet은 사이즈가 커서 괜찮은데, CIFAR는 (32,32,3)이니까 PCA 적용 안 함.
@@ -87,17 +87,20 @@
       - 지금은 lr만 조정하는데 이용하고있다. 너무 낭비이지 않을까?
       > (bool) VALID : global const 
       > dataset loading할 때에 VALID에 따라 이후 training에서도 valid 제외하도록 코드 수정함.
+      >> 는 이거 하려고 if문 dataloader에 몇 개 달았다가 train 시간 11s에서 22s로 늘어나서 복구함.
+    - BN 
+      - affine = True가 기본인데, 이래야 gamma and beta가 학습됨.
+      - https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html
 
 # The Question
 - Implementation
   - [x] Why they use stride 2 in the downsample layer? 왜 downsampling된 블럭에선 stride=2인가?
     > input은 64,8,8이고 다운 샘플 이후엔 128,4,4가 되는데, 스트레치하면서 사이즈도 줄여야 하기 때문에 stride도 2임.
-  - [ ] 왜 batchnorm에서 eps를 비롯한 옵션들의 설정 추가가 유효했는가? 기존엔 #value만 적었었음.
   - [x] final avg pooling : 7x7x512 -> 1x1x512 이게맞나? 현재 CIFAR들은 batch*512*1*1이라 확인불가.
     > pytorch가 adoptavgpool씀.
-- Training
-  - [ ] 왜 Adam에 LR 0.1을 주면 학습이 안 되는가?
   - [ ] 왜 제일 마지막 FC에 Relu넣으면 학습 아예 안 되지?
+- Training
+  
 
 
 # Training Log
@@ -161,7 +164,9 @@
   ```
 - adam
   ```
-  Epoch 20/20:
-  Train Loss: 1.4475 | Train Acc: 58.53%
-  Test Loss: 2.5981 | Test Acc: 37.45%
+  [Epoch 56/5000] :
+  Training time: 10.44 seconds
+  Train Loss: 0.0313 | Train Acc: 98.93%
+  Valid Loss: 1.6963 | Valid Acc: 71.88%
+  Test  Loss: 1.6655 | Test Acc: 71.65%
   ```
