@@ -120,6 +120,16 @@
   Valid Loss: 1.5817 | Valid Acc: 68.84%
   Test Loss: 1.5443 | Test Acc: 68.60%
   ```
+  ---
+  ```
+  LR decay 엄격하게 제한한 것. -> 8nn epoch까지 lr = 0.1
+  [Epoch 875/5000] :
+  Training time: 10.27 seconds
+  Train Loss: 0.0258 | Train Acc: 99.17%
+  Valid Loss: 1.3594 | Valid Acc: 74.32%
+  Test  Loss: 1.3429 | Test Acc: 74.22%
+  --------------------------------------------------
+  ```
 - adam
   ```
   Epoch 20/20:
