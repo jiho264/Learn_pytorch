@@ -85,6 +85,8 @@
         - 기본 Adam 호출보다 수렴이 느림. 다만 어디까지 수렴하는진 길게 학습시켜보지 않아서 모름.
     - Validation set의 용도?
       - 지금은 lr만 조정하는데 이용하고있다. 너무 낭비이지 않을까?
+      > (bool) VALID : global const 
+      > dataset loading할 때에 VALID에 따라 이후 training에서도 valid 제외하도록 코드 수정함.
 
 # The Question
 - Implementation
