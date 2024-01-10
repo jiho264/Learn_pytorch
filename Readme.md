@@ -24,6 +24,7 @@
   - [ ] The standard color augmentation in [21] is used.
     > 1. Crop + resizeing
     > 2. Principal Components Analysis (PCA 개념참고 : https://ddongwon.tistory.com/114 )
+    >> 근데 ImageNet은 사이즈가 커서 괜찮은데, CIFAR는 (32,32,3)이니까 PCA 적용 안 함.
 
   > [21] AlexNet - Dataset section
   >> We did not pre-process the images in any other way, except for subtracting the mean activity over the training set from each pixel. 
@@ -72,9 +73,20 @@
       - (In CIFAR100)
         - 내 ResNet34 수치 : num_params = 21.336M, FLOPS = near 74.918M (input 2,3,32,32 일 때 0.15G)
     - ResNet34와 ResNet32는 서로 다른 것이다. 그래도 34를 같은 방식으로 코딩하고 학습 시키면 CIFAR10에서의 32의 퍼포먼스는 분명 나올 것이다.
-****
+    - PCA추가하려다 CIFAR는 Low Resolution이라 적용 안 하기로 함.
+    - Adam .. !
+      - https://pytorch.org/docs/stable/generated/torch.optim.Adam.html#torch.optim.Adam
+      - optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)
+        - 1st epoch부터 test acc 40%
+        - default lr = 0.001
+      - optimizer = torch.optim.Adam(model.parameters())
+        - 위에거랑 비슷한듯? 미세하게 60%대 진입 빠름.
+      - optimizer = torch.optim.Adam(model.parameters(), lr=0.1, weight_decay=1e-4)
+        - 기본 Adam 호출보다 수렴이 느림. 다만 어디까지 수렴하는진 길게 학습시켜보지 않아서 모름.
+    - Validation set의 용도?
+      - 지금은 lr만 조정하는데 이용하고있다. 너무 낭비이지 않을까?
 
-## The Question about Working Process of ResNet
+# The Question
 - Implementation
   - [x] Why they use stride 2 in the downsample layer? 왜 downsampling된 블럭에선 stride=2인가?
     > input은 64,8,8이고 다운 샘플 이후엔 128,4,4가 되는데, 스트레치하면서 사이즈도 줄여야 하기 때문에 stride도 2임.
@@ -86,9 +98,11 @@
   - [ ] 왜 제일 마지막 FC에 Relu넣으면 학습 아예 안 되지?
 
 
-### Result Log
+# Training Log
 - SGD
   ```
+  optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
+
   Epoch 223/5000:
   Training time: 10.32 seconds
   Epoch 00223: reducing learning rate of group 0 to 1.0000e-02.
@@ -125,6 +139,16 @@
   ```
   ---
   ```
+  optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
+  scheduler = ReduceLROnPlateau(
+    optimizer,
+    mode="min",
+    patience=1000,
+    factor=0.1,
+    verbose=True,
+    threshold=1e-5,
+    min_lr=MIN_LR)
+
   LR decay 엄격하게 제한한 것. -> 8nn epoch까지 lr = 0.1
   [Epoch 875/5000] :
   Training time: 10.27 seconds
