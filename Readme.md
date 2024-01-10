@@ -91,6 +91,13 @@
     - BN 
       - affine = True가 기본인데, 이래야 gamma and beta가 학습됨.
       - https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html
+    - 하루를 마치며..
+      - 하라는거 다 했는데, 왜 71%가 한계인지 잘 모르겠다. 뭘 빠트렸을까? 저자는 data augmentation에서 오히려 최신 테크닉을 사용하지 않았다.
+      - Params, FLOPS로 미루어보아 ResNet34 원본과 큰 차이 없는 것 같다....
+      - split ratio를 9:1말고 95:5로 변경 후 Adam으로 밤새 돌려보자
+    - 원본으로 학습시켜보자
+      - 원본이랑 마지막 FC node 수에 따른 model크기 외, 모두 동일함.
+      - Pretrained resnet34는 10여 epochs만에 약 80%까지 더 상승함.
 
 # The Question
 - Implementation
@@ -169,4 +176,215 @@
   Train Loss: 0.0313 | Train Acc: 98.93%
   Valid Loss: 1.6963 | Valid Acc: 71.88%
   Test  Loss: 1.6655 | Test Acc: 71.65%
+  ```
+  ---
+- 원본이랑 마지막 FC node 수에 따른 model크기 외, 모두 동일함.
+  ```
+  > Original ResNet34 from torchvision.models.resnet34(pretrained=True)
+  | module                 | #parameters or shape   | #flops    |
+  |:-----------------------|:-----------------------|:----------|
+  | model                  | 21.798M                | 0.151G    |
+  |  conv1                 |  9.408K                |  4.817M   |
+  |   conv1.weight         |   (64, 3, 7, 7)        |           |
+  |  bn1                   |  0.128K                |  0.164M   |
+  |   bn1.weight           |   (64,)                |           |
+  |   bn1.bias             |   (64,)                |           |
+  |  layer1                |  0.222M                |  28.557M  |
+  |   layer1.0             |   73.984K              |   9.519M  |
+  |    layer1.0.conv1      |    36.864K             |    4.719M |
+  |    layer1.0.bn1        |    0.128K              |    40.96K |
+  |    layer1.0.conv2      |    36.864K             |    4.719M |
+  |    layer1.0.bn2        |    0.128K              |    40.96K |
+  |   layer1.1             |   73.984K              |   9.519M  |
+  |    layer1.1.conv1      |    36.864K             |    4.719M |
+  |    layer1.1.bn1        |    0.128K              |    40.96K |
+  |    layer1.1.conv2      |    36.864K             |    4.719M |
+  |    layer1.1.bn2        |    0.128K              |    40.96K |
+  |   layer1.2             |   73.984K              |   9.519M  |
+  |    layer1.2.conv1      |    36.864K             |    4.719M |
+  |    layer1.2.bn1        |    0.128K              |    40.96K |
+  |    layer1.2.conv2      |    36.864K             |    4.719M |
+  |    layer1.2.bn2        |    0.128K              |    40.96K |
+  |  layer2                |  1.116M                |  35.836M  |
+  |   layer2.0             |   0.23M                |   7.401M  |
+  |    layer2.0.conv1      |    73.728K             |    2.359M |
+  |    layer2.0.bn1        |    0.256K              |    20.48K |
+  |    layer2.0.conv2      |    0.147M              |    4.719M |
+  |    layer2.0.bn2        |    0.256K              |    20.48K |
+  |    layer2.0.downsample |    8.448K              |    0.283M |
+  |   layer2.1             |   0.295M               |   9.478M  |
+  |    layer2.1.conv1      |    0.147M              |    4.719M |
+  |    layer2.1.bn1        |    0.256K              |    20.48K |
+  |    layer2.1.conv2      |    0.147M              |    4.719M |
+  |    layer2.1.bn2        |    0.256K              |    20.48K |
+  |   layer2.2             |   0.295M               |   9.478M  |
+  |    layer2.2.conv1      |    0.147M              |    4.719M |
+  |    layer2.2.bn1        |    0.256K              |    20.48K |
+  |    layer2.2.conv2      |    0.147M              |    4.719M |
+  |    layer2.2.bn2        |    0.256K              |    20.48K |
+  |   layer2.3             |   0.295M               |   9.478M  |
+  |    layer2.3.conv1      |    0.147M              |    4.719M |
+  |    layer2.3.bn1        |    0.256K              |    20.48K |
+  |    layer2.3.conv2      |    0.147M              |    4.719M |
+  |    layer2.3.bn2        |    0.256K              |    20.48K |
+  |  layer3                |  6.822M                |  54.659M  |
+  |   layer3.0             |   0.919M               |   7.371M  |
+  |    layer3.0.conv1      |    0.295M              |    2.359M |
+  |    layer3.0.bn1        |    0.512K              |    10.24K |
+  |    layer3.0.conv2      |    0.59M               |    4.719M |
+  |    layer3.0.bn2        |    0.512K              |    10.24K |
+  |    layer3.0.downsample |    33.28K              |    0.272M |
+  |   layer3.1             |   1.181M               |   9.458M  |
+  |    layer3.1.conv1      |    0.59M               |    4.719M |
+  |    layer3.1.bn1        |    0.512K              |    10.24K |
+  |    layer3.1.conv2      |    0.59M               |    4.719M |
+  |    layer3.1.bn2        |    0.512K              |    10.24K |
+  |   layer3.2             |   1.181M               |   9.458M  |
+  |    layer3.2.conv1      |    0.59M               |    4.719M |
+  |    layer3.2.bn1        |    0.512K              |    10.24K |
+  |    layer3.2.conv2      |    0.59M               |    4.719M |
+  |    layer3.2.bn2        |    0.512K              |    10.24K |
+  |   layer3.3             |   1.181M               |   9.458M  |
+  |    layer3.3.conv1      |    0.59M               |    4.719M |
+  |    layer3.3.bn1        |    0.512K              |    10.24K |
+  |    layer3.3.conv2      |    0.59M               |    4.719M |
+  |    layer3.3.bn2        |    0.512K              |    10.24K |
+  |   layer3.4             |   1.181M               |   9.458M  |
+  |    layer3.4.conv1      |    0.59M               |    4.719M |
+  |    layer3.4.bn1        |    0.512K              |    10.24K |
+  |    layer3.4.conv2      |    0.59M               |    4.719M |
+  |    layer3.4.bn2        |    0.512K              |    10.24K |
+  |   layer3.5             |   1.181M               |   9.458M  |
+  |    layer3.5.conv1      |    0.59M               |    4.719M |
+  |    layer3.5.bn1        |    0.512K              |    10.24K |
+  |    layer3.5.conv2      |    0.59M               |    4.719M |
+  |    layer3.5.bn2        |    0.512K              |    10.24K |
+  |  layer4                |  13.114M               |  26.25M   |
+  |   layer4.0             |   3.673M               |   7.355M  |
+  |    layer4.0.conv1      |    1.18M               |    2.359M |
+  |    layer4.0.bn1        |    1.024K              |    5.12K  |
+  |    layer4.0.conv2      |    2.359M              |    4.719M |
+  |    layer4.0.bn2        |    1.024K              |    5.12K  |
+  |    layer4.0.downsample |    0.132M              |    0.267M |
+  |   layer4.1             |   4.721M               |   9.447M  |
+  |    layer4.1.conv1      |    2.359M              |    4.719M |
+  |    layer4.1.bn1        |    1.024K              |    5.12K  |
+  |    layer4.1.conv2      |    2.359M              |    4.719M |
+  |    layer4.1.bn2        |    1.024K              |    5.12K  |
+  |   layer4.2             |   4.721M               |   9.447M  |
+  |    layer4.2.conv1      |    2.359M              |    4.719M |
+  |    layer4.2.bn1        |    1.024K              |    5.12K  |
+  |    layer4.2.conv2      |    2.359M              |    4.719M |
+  |    layer4.2.bn2        |    1.024K              |    5.12K  |
+  |  fc                    |  0.513M                |  1.024M   |
+  |   fc.weight            |   (1000, 512)          |           |
+  |   fc.bias              |   (1000,)              |           |
+  |  avgpool               |                        |  1.024K   |
+    ```
+  ---
+  ```
+  > My ResNet34
+  | module                       | #parameters or shape   | #flops    |
+  |:-----------------------------|:-----------------------|:----------|
+  | model                        | 21.29M                 | 0.15G     |
+  |  conv1                       |  9.408K                |  4.817M   |
+  |   conv1.weight               |   (64, 3, 7, 7)        |           |
+  |  bn1                         |  0.128K                |  0.164M   |
+  |   bn1.weight                 |   (64,)                |           |
+  |   bn1.bias                   |   (64,)                |           |
+  |  conv64blocks                |  0.222M                |  28.557M  |
+  |   conv64blocks.0             |   73.984K              |   9.519M  |
+  |    conv64blocks.0.conv1      |    36.864K             |    4.719M |
+  |    conv64blocks.0.bn1        |    0.128K              |    40.96K |
+  |    conv64blocks.0.conv2      |    36.864K             |    4.719M |
+  |    conv64blocks.0.bn2        |    0.128K              |    40.96K |
+  |   conv64blocks.1             |   73.984K              |   9.519M  |
+  |    conv64blocks.1.conv1      |    36.864K             |    4.719M |
+  |    conv64blocks.1.bn1        |    0.128K              |    40.96K |
+  |    conv64blocks.1.conv2      |    36.864K             |    4.719M |
+  |    conv64blocks.1.bn2        |    0.128K              |    40.96K |
+  |   conv64blocks.2             |   73.984K              |   9.519M  |
+  |    conv64blocks.2.conv1      |    36.864K             |    4.719M |
+  |    conv64blocks.2.bn1        |    0.128K              |    40.96K |
+  |    conv64blocks.2.conv2      |    36.864K             |    4.719M |
+  |    conv64blocks.2.bn2        |    0.128K              |    40.96K |
+  |  conv128blocks               |  1.116M                |  35.836M  |
+  |   conv128blocks.0            |   0.23M                |   7.401M  |
+  |    conv128blocks.0.conv1     |    73.728K             |    2.359M |
+  |    conv128blocks.0.bn1       |    0.256K              |    20.48K |
+  |    conv128blocks.0.conv2     |    0.147M              |    4.719M |
+  |    conv128blocks.0.bn2       |    0.256K              |    20.48K |
+  |    conv128blocks.0.conv_down |    8.192K              |    0.262M |
+  |    conv128blocks.0.bn_down   |    0.256K              |    20.48K |
+  |   conv128blocks.1            |   0.295M               |   9.478M  |
+  |    conv128blocks.1.conv1     |    0.147M              |    4.719M |
+  |    conv128blocks.1.bn1       |    0.256K              |    20.48K |
+  |    conv128blocks.1.conv2     |    0.147M              |    4.719M |
+  |    conv128blocks.1.bn2       |    0.256K              |    20.48K |
+  |   conv128blocks.2            |   0.295M               |   9.478M  |
+  |    conv128blocks.2.conv1     |    0.147M              |    4.719M |
+  |    conv128blocks.2.bn1       |    0.256K              |    20.48K |
+  |    conv128blocks.2.conv2     |    0.147M              |    4.719M |
+  |    conv128blocks.2.bn2       |    0.256K              |    20.48K |
+  |   conv128blocks.3            |   0.295M               |   9.478M  |
+  |    conv128blocks.3.conv1     |    0.147M              |    4.719M |
+  |    conv128blocks.3.bn1       |    0.256K              |    20.48K |
+  |    conv128blocks.3.conv2     |    0.147M              |    4.719M |
+  |    conv128blocks.3.bn2       |    0.256K              |    20.48K |
+  |  conv256blocks               |  6.822M                |  54.659M  |
+  |   conv256blocks.0            |   0.919M               |   7.371M  |
+  |    conv256blocks.0.conv1     |    0.295M              |    2.359M |
+  |    conv256blocks.0.bn1       |    0.512K              |    10.24K |
+  |    conv256blocks.0.conv2     |    0.59M               |    4.719M |
+  |    conv256blocks.0.bn2       |    0.512K              |    10.24K |
+  |    conv256blocks.0.conv_down |    32.768K             |    0.262M |
+  |    conv256blocks.0.bn_down   |    0.512K              |    10.24K |
+  |   conv256blocks.1            |   1.181M               |   9.458M  |
+  |    conv256blocks.1.conv1     |    0.59M               |    4.719M |
+  |    conv256blocks.1.bn1       |    0.512K              |    10.24K |
+  |    conv256blocks.1.conv2     |    0.59M               |    4.719M |
+  |    conv256blocks.1.bn2       |    0.512K              |    10.24K |
+  |   conv256blocks.2            |   1.181M               |   9.458M  |
+  |    conv256blocks.2.conv1     |    0.59M               |    4.719M |
+  |    conv256blocks.2.bn1       |    0.512K              |    10.24K |
+  |    conv256blocks.2.conv2     |    0.59M               |    4.719M |
+  |    conv256blocks.2.bn2       |    0.512K              |    10.24K |
+  |   conv256blocks.3            |   1.181M               |   9.458M  |
+  |    conv256blocks.3.conv1     |    0.59M               |    4.719M |
+  |    conv256blocks.3.bn1       |    0.512K              |    10.24K |
+  |    conv256blocks.3.conv2     |    0.59M               |    4.719M |
+  |    conv256blocks.3.bn2       |    0.512K              |    10.24K |
+  |   conv256blocks.4            |   1.181M               |   9.458M  |
+  |    conv256blocks.4.conv1     |    0.59M               |    4.719M |
+  |    conv256blocks.4.bn1       |    0.512K              |    10.24K |
+  |    conv256blocks.4.conv2     |    0.59M               |    4.719M |
+  |    conv256blocks.4.bn2       |    0.512K              |    10.24K |
+  |   conv256blocks.5            |   1.181M               |   9.458M  |
+  |    conv256blocks.5.conv1     |    0.59M               |    4.719M |
+  |    conv256blocks.5.bn1       |    0.512K              |    10.24K |
+  |    conv256blocks.5.conv2     |    0.59M               |    4.719M |
+  |    conv256blocks.5.bn2       |    0.512K              |    10.24K |
+  |  conv512blocks               |  13.114M               |  26.25M   |
+  |   conv512blocks.0            |   3.673M               |   7.355M  |
+  |    conv512blocks.0.conv1     |    1.18M               |    2.359M |
+  |    conv512blocks.0.bn1       |    1.024K              |    5.12K  |
+  |    conv512blocks.0.conv2     |    2.359M              |    4.719M |
+  |    conv512blocks.0.bn2       |    1.024K              |    5.12K  |
+  |    conv512blocks.0.conv_down |    0.131M              |    0.262M |
+  |    conv512blocks.0.bn_down   |    1.024K              |    5.12K  |
+  |   conv512blocks.1            |   4.721M               |   9.447M  |
+  |    conv512blocks.1.conv1     |    2.359M              |    4.719M |
+  |    conv512blocks.1.bn1       |    1.024K              |    5.12K  |
+  |    conv512blocks.1.conv2     |    2.359M              |    4.719M |
+  |    conv512blocks.1.bn2       |    1.024K              |    5.12K  |
+  |   conv512blocks.2            |   4.721M               |   9.447M  |
+  |    conv512blocks.2.conv1     |    2.359M              |    4.719M |
+  |    conv512blocks.2.bn1       |    1.024K              |    5.12K  |
+  |    conv512blocks.2.conv2     |    2.359M              |    4.719M |
+  |    conv512blocks.2.bn2       |    1.024K              |    5.12K  |
+  |  fc1                         |  5.13K                 |  10.24K   |
+  |   fc1.weight                 |   (10, 512)            |           |
+  |   fc1.bias                   |   (10,)                |           |
+  |  avgpool                     |                        |  1.024K   |
+
   ```
