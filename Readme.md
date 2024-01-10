@@ -39,12 +39,12 @@
     > Submean 안 한거로 테스트하면 완전 학습 안 되던데??????
 ## Week 0: Summary of 2023
 - [x] Setup the Leanring Process
-- [x] Implemantation of ResNet32 Model Structure
-- [x] Implemantation of the horizontal flip data augmentation in Input Dataset
+- [x] Implementation of ResNet32 Model Structure
+- [x] Implementation of the horizontal flip data augmentation in Input Dataset
 
 ## Week 1: First week, Jan, 2024
 ##### Goal : Getting 15% error rate in CIFAR-10 dataset.
-  - [x] split to train/val and Imaplemanation of Leaning rate Decay (scheduling)
+  - [x] split to train/val and Imaplemanation of Leaning rate Decay (scheduling) 
 
 ##### My results :
   - Jan 9 
@@ -59,6 +59,7 @@
       - float64에서 float32, float16으로 바꿔도 계산에 걸리는 시간은 비슷했으므로, float64로 진행.
   - Jan 10    
     - 내 구현과 세부적으로 다른 부분이 무엇인가? 
+      > Params랑 FLOPS 보니 구현은 거의 똑같이 한 것 같은데..
       - (In ImageNet)
         - 공식 도큐멘트 수치 : num_params = 21797672, FLOPS = 3.66G
         - 내 ResNet34 수치 : num_params = 21.29M, FLOPS = 3.671G
