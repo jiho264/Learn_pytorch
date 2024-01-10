@@ -18,9 +18,12 @@
   - [x] we do not use dropout
   
 - In ImageNet :
-  - [ ] The image is resized with its shorter side randomly sampled in [256, 480] for scale augmentation [41]. 
-  - [ ] A 224×224 crop is randomly sampled from an image or its horizontal flip, with the per-pixel mean subtracted [21]. 
+  - [x] The image is resized with its shorter side randomly sampled in [256, 480] for scale augmentation [41]. 
+    > CIFAR 다룰 때엔 이미 32*32이므로 skip 
+  - [x] A 224×224 crop is randomly sampled from an image or its horizontal flip, with the per-pixel mean subtracted [21]. 
   - [ ] The standard color augmentation in [21] is used.
+    > 1. Crop + resizeing
+    > 2. Principal Components Analysis (PCA 개념참고 : https://ddongwon.tistory.com/114 )
 
   > [21] AlexNet - Dataset section
   >> We did not pre-process the images in any other way, except for subtracting the mean activity over the training set from each pixel. 
