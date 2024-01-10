@@ -26,7 +26,7 @@
   >> We did not pre-process the images in any other way, except for subtracting the mean activity over the training set from each pixel. 
   >> So we trained our network on the (centered) raw RGB values of the pixels.
 
-- In CIFAR10 :
+- In CIFAR10 (ResNet32):
   - [x] weight decay = 0.0001 and momentum = 0.9
   - [x] adopt the weight initialization in He and BN without dropout
   - [x] (PASS) batch size = 128 on 2 GPUs
@@ -58,7 +58,16 @@
     - Overhead 줄이려는 시도
       - float64에서 float32, float16으로 바꿔도 계산에 걸리는 시간은 비슷했으므로, float64로 진행.
   - Jan 10    
-    - 내 구현과 세부적으로 다른 부분이 무엇인가?
+    - 내 구현과 세부적으로 다른 부분이 무엇인가? 
+      - (In ImageNet)
+        - 공식 도큐멘트 수치 : num_params = 21797672, FLOPS = 3.66G
+        - 내 ResNet34 수치 : num_params = 21.29M, FLOPS = 3.671G
+        - https://pytorch.org/vision/main/models/generated/torchvision.models.resnet34.html
+      - (In CIFAR10)
+        - 내 ResNet34 수치 : num_params = 21.29M, FLOPS = near 74.918M (input 2,3,32,32 일 때 0.15G)
+      - (In CIFAR100)
+        - 내 ResNet34 수치 : num_params = 21.336M, FLOPS = near 74.918M (input 2,3,32,32 일 때 0.15G)
+    - ResNet34와 ResNet32는 서로 다른 것이다. 그래도 34를 같은 방식으로 코딩하고 학습 시키면 CIFAR10에서의 32의 퍼포먼스는 분명 나올 것이다.
 ****
 
 ## The Question about Working Process of ResNet
