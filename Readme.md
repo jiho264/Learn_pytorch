@@ -197,6 +197,10 @@
             > 근데 standard 10 crop이 뭐야???????????
 
     - ImageNet2012 학습 :
+      - ```num_workers=8```
+      - ```pin_memory = True```
+      - AMP를 train, valid, test 중 train의 forward pass에만 적용
+        >```https://tutorials.pytorch.kr/recipes/recipes/amp_recipe.html```
 
 # 3. The Question
 - Implementation
