@@ -148,6 +148,7 @@
   - Jan 11
     - Origin과의 비교 결과
       - 같은 학습 method에서는 거의 동일한 Convergence 보임.
+      - 500 epochs에서도 valid loss 줄지 않으면, 그간 최소 loss였던 weight를 저장함. -> 579에서 종료면 실제 학습은 79에서 제일 잘 나왔던 것.
         > 학습 방법의 차이에서 80%대 달성이 좌우되는 듯 하다.
       - MyResNet34
         ```
@@ -158,7 +159,7 @@
         Test  Loss: 2.5924 | Test Acc: 75.46%
         Early stopping after 579 epochs without improvement.
         ```
-      - Origin ResNet34
+      - Origin ResNet34 (pretrained = False)
         ```
         [Epoch 506/5000] :
         Training time: 11.10 seconds
@@ -167,8 +168,17 @@
         Test  Loss: 2.3427 | Test Acc: 75.67%
         Early stopping after 505 epochs without improvement.
         ```
+      - Origin ResNet34 (pretrained = True)
+        ```
+        [Epoch 134/5000] :
+        Training time: 11.12 seconds
+        Train Loss: 0.0043 | Train Acc: 99.86%
+        Valid Loss: 1.1660 | Valid Acc: 81.80%
+        Test  Loss: 1.2111 | Test Acc: 81.40%
+        --------------------------------------------------
+        ```
     - Today's Goal : Validation set을 더 적극 활용해서 acc 높여보기.
-      - ㅇㅇㅇ...
+      - Paper에선 valid set을 어떻게 했었나?
 
 # 3. The Question
 - Implementation
