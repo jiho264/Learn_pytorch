@@ -1,6 +1,7 @@
 # Create ResNet32 model
 ##### LEE, JIHO
 > Dept. of Embedded Systems Engineering, Incheon National University
+
 > jiho264@inu.ac.kr /  jiho264@naver.com
  
 - The purpose of this project is to create a ResNet32 model using Pytorch.
