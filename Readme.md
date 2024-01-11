@@ -95,9 +95,33 @@
       - 하라는거 다 했는데, 왜 71%가 한계인지 잘 모르겠다. 뭘 빠트렸을까? 저자는 data augmentation에서 오히려 최신 테크닉을 사용하지 않았다.
       - Params, FLOPS로 미루어보아 ResNet34 원본과 큰 차이 없는 것 같다....
       - split ratio를 9:1말고 95:5로 변경 후 Adam으로 밤새 돌려보자
+      - 2년 전에 아무렇게나 Conv 쌓아서 만든게 acc 74%네...?
+        - https://github.com/jiho264/mycnn_cifar10/blob/master/mycnn_onlyconv_RGB.ipynb
     - 원본으로 학습시켜보자
       - 원본이랑 마지막 FC node 수에 따른 model크기 외, 모두 동일함.
-      - Pretrained resnet34는 10여 epochs만에 약 80%까지 더 상승함.
+      - Pretrained resnet34는 10여 epochs만에 약 81%까지 더 상승함.
+  - Jan 11
+    - Origin과의 비교 결과
+      - 같은 학습 method에서는 거의 동일한 Convergence 보임.
+      > 학습 방법의 차이에서 80%대 달성이 좌우되는 듯 하다.
+      - MyResNet34
+      ```
+      [Epoch 580/5000] :
+      Training time: 15.96 seconds
+      Train Loss: 0.0000 | Train Acc: 100.00%
+      Valid Loss: 2.5979 | Valid Acc: 75.64%
+      Test  Loss: 2.5924 | Test Acc: 75.46%
+      Early stopping after 579 epochs without improvement.
+      ```
+      - Origin ResNet34
+      ```
+      [Epoch 506/5000] :
+      Training time: 11.10 seconds
+      Train Loss: 0.0040 | Train Acc: 99.89%
+      Valid Loss: 2.4615 | Valid Acc: 74.32%
+      Test  Loss: 2.3427 | Test Acc: 75.67%
+      Early stopping after 505 epochs without improvement.
+      ```
 
 # The Question
 - Implementation
