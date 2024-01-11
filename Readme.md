@@ -19,6 +19,8 @@
 - ```Pytorch 2.1.1```
 - ```CUDA 11.8```
 - ```pip [sklearn, copy, time]```
+- ```/data/ImageNet2012/train```
+- ```/data/ImageNet2012/val```
 ##### - Model Structure
   - Same to Origin ResNet34.
   - also, apply ```He initialization``` and ```Batch Normalization```.
@@ -177,8 +179,27 @@
         Test  Loss: 1.2111 | Test Acc: 81.40%
         --------------------------------------------------
         ```
-    - Today's Goal : Validation set을 더 적극 활용해서 acc 높여보기.
-      - Paper에선 valid set을 어떻게 했었나?
+    - Today's Goal : Validation set을 더 적극 활용해서 acc 높여보기.  
+      - Origin - CIFAR10
+        > Learning rate schedualing을 위해 train을 45k/5k로 split함.
+      - Origin - ImageNet에서는 
+        > split하지 않고, error 평평할 때에 lr만 10으로 나눴다고 함.
+          - [ ] The image is resized with its shorter side randomly sampled in [256, 480] for scale augmentation[41].
+            > [41] == VGG-16
+            >> 굉장히 다양한 train / test image size 경우 수를 실험함.
+            >> 맨 처음 부분에 single scale evaluation에서 256*256을 했었기에, 다양한 crop 구현 이전에 single scale 부터 구현해보자
+          - [x] A 224 x 224 crop is randomly sampled from an image or its horizontal flip, with the pre-pixel subtracted
+          - [ ] PCA : The standard color augmentation is used.
+    - ImageNet2012 학습 :
+      - Batch_size = 2048
+        - VRAM 1.8G
+        - 102m 소요...?
+        ```
+        [Epoch 1/5000] :
+        Training time: 6132.01 seconds
+        Train Loss: 6.3311 | Train Acc: 1.92%
+        Valid Loss: 43138.0477 | Valid Acc: 0.10%
+        ```
 
 # 3. The Question
 - Implementation
@@ -195,9 +216,10 @@
 <div markdown="1">
 
 - SGD
-  ```
+  ```python
   optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-
+  ```
+  ```
   Epoch 223/5000:
   Training time: 10.32 seconds
   Epoch 00223: reducing learning rate of group 0 to 1.0000e-02.
@@ -233,7 +255,7 @@
   Test Loss: 1.5443 | Test Acc: 68.60%
   ```
   ---
-  ```
+  ```python
   optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
   scheduler = ReduceLROnPlateau(
     optimizer,
@@ -243,7 +265,8 @@
     verbose=True,
     threshold=1e-5,
     min_lr=MIN_LR)
-
+  ```
+  ```
   LR decay 엄격하게 제한한 것. -> 8nn epoch까지 lr = 0.1
   [Epoch 875/5000] :
   Training time: 10.27 seconds
@@ -475,6 +498,7 @@
 </div>
 </details>
 
+# 5. etc..
 #### ImageNet Download 이후 작업
   ##### Download the ImageNet dataset
   The ImageNet Large Scale Visual Recognition Challenge (ILSVRC) dataset has 1000 categories and 1.2 million images. The images do not need to be preprocessed or packaged in any database, but the validation images need to be moved into appropriate subfolders.
