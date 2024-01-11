@@ -7,8 +7,44 @@
 - The Goal of this project is that to get the accuracy of near original paper's accuracy.
 - The Origin Model have 7.51% error rate in CIFAR-10 dataset.
 
-# The Manual from Original Paper
-## They's Setup
+# 0. Usage
+- Run ```create_resnet.ipynb```
+- The trained model is ```models/Myresnet34.pth```
+---
+# 1. Implementation
+##### - My dev environment
+- ```Ubuntu 20.04 LTS```
+- ```Python 3.11.5```
+- ```Pytorch 2.1.1```
+- ```CUDA 11.8```
+- ```pip [sklearn, copy, time]```
+##### - Model Structure
+  - Same to Origin ResNet34.
+  - also, apply ```He initialization``` and ```Batch Normalization```.
+##### - Preprecessing on Dataset
+  - The per-pixel **mean is subtracted** from each image
+  - 4 pixels are padded on each side, and **a 32 x 32 crop is randomly sampled** from the padded image or its **horizontal flip**
+  - Split method
+    - Train : 47.5k
+    - validation : 2.5k 
+      - > 현재 early stopping 말고 아무 기능 없음. 보완 필요.
+    - Test : 10k
+##### - Training Method
+  - ```Batch size = 256```
+  - ```Epochs = 5000```
+    - but take early stopping when valid loss not improved within 500 epochs
+  - Optimizer
+    1. **```optimizer = torch.optim.Adam(model.parameters())```**
+    2. ```optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)```
+    3. ```optimizer = torch.optim.Adam(model.parameters(), lr=0.1, weight_decay=1e-4)```
+    4. ```optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)```
+
+
+## The Manual from Original Paper
+<details>
+<summary>The Manual from Original Paper</summary>
+<div markdown="1">
+
 - Implementation :
   - [x] we initialize the weights as on He initialization
   - [x] we adopt batch normalization after each convolutional and before activation
@@ -41,6 +77,13 @@
   - [x] the per-pixel mean is subtracted from each image
   - [x] For testing, use original images
     > Submean 안 한거로 테스트하면 완전 학습 안 되던데??????
+
+</div>
+</details>
+
+
+---
+# 2. Development Log
 ## Week 0: Summary of 2023
 - [x] Setup the Leanring Process
 - [x] Implementation of ResNet32 Model Structure
@@ -72,8 +115,11 @@
         - 내 ResNet34 수치 : num_params = 21.29M, FLOPS = near 74.918M (input 2,3,32,32 일 때 0.15G)
       - (In CIFAR100)
         - 내 ResNet34 수치 : num_params = 21.336M, FLOPS = near 74.918M (input 2,3,32,32 일 때 0.15G)
-    - ResNet34와 ResNet32는 서로 다른 것이다. 그래도 34를 같은 방식으로 코딩하고 학습 시키면 CIFAR10에서의 32의 퍼포먼스는 분명 나올 것이다.
-    - PCA추가하려다 CIFAR는 Low Resolution이라 적용 안 하기로 함.
+      - BN 
+        - affine = True가 기본인데, 이래야 gamma and beta가 학습됨.
+        - https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html
+      - ResNet34와 ResNet32는 서로 다른 것이다. 그래도 34를 같은 방식으로 코딩하고 학습 시키면 CIFAR10에서의 32의 **퍼포먼스는 분명 나올 것이다.**
+      - **PCA추가하려다 CIFAR는 Low Resolution이라 적용 안 하기로 함.**
     - Adam .. !
       - https://pytorch.org/docs/stable/generated/torch.optim.Adam.html#torch.optim.Adam
       - optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)
@@ -85,56 +131,58 @@
         - 기본 Adam 호출보다 수렴이 느림. 다만 어디까지 수렴하는진 길게 학습시켜보지 않아서 모름.
     - Validation set의 용도?
       - 지금은 lr만 조정하는데 이용하고있다. 너무 낭비이지 않을까?
-      > (bool) VALID : global const 
-      > dataset loading할 때에 VALID에 따라 이후 training에서도 valid 제외하도록 코드 수정함.
-      >> 는 이거 하려고 if문 dataloader에 몇 개 달았다가 train 시간 11s에서 22s로 늘어나서 복구함.
-    - BN 
-      - affine = True가 기본인데, 이래야 gamma and beta가 학습됨.
-      - https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html
+        > (bool) VALID : global const 
+        > dataset loading할 때에 VALID에 따라 이후 training에서도 valid 제외하도록 코드 수정함.
+        >> 는 이거 하려고 if문 dataloader에 몇 개 달았다가 train 시간 11s에서 22s로 늘어나서 복구함.
+    
     - 하루를 마치며..
       - 하라는거 다 했는데, 왜 71%가 한계인지 잘 모르겠다. 뭘 빠트렸을까? 저자는 data augmentation에서 오히려 최신 테크닉을 사용하지 않았다.
       - Params, FLOPS로 미루어보아 ResNet34 원본과 큰 차이 없는 것 같다....
       - split ratio를 9:1말고 95:5로 변경 후 Adam으로 밤새 돌려보자
       - 2년 전에 아무렇게나 Conv 쌓아서 만든게 acc 74%네...?
         - https://github.com/jiho264/mycnn_cifar10/blob/master/mycnn_onlyconv_RGB.ipynb
-    - 원본으로 학습시켜보자
-      - 원본이랑 마지막 FC node 수에 따른 model크기 외, 모두 동일함.
-      - Pretrained resnet34는 10여 epochs만에 약 81%까지 더 상승함.
+      - 원본으로 학습시켜보자
+        - 원본이랑 마지막 FC node 수에 따른 model크기 외, 모두 동일함.
+        - Pretrained resnet34는 10여 epochs만에 약 81%까지 더 상승함.
   - Jan 11
     - Origin과의 비교 결과
       - 같은 학습 method에서는 거의 동일한 Convergence 보임.
-      > 학습 방법의 차이에서 80%대 달성이 좌우되는 듯 하다.
+        > 학습 방법의 차이에서 80%대 달성이 좌우되는 듯 하다.
       - MyResNet34
-      ```
-      [Epoch 580/5000] :
-      Training time: 15.96 seconds
-      Train Loss: 0.0000 | Train Acc: 100.00%
-      Valid Loss: 2.5979 | Valid Acc: 75.64%
-      Test  Loss: 2.5924 | Test Acc: 75.46%
-      Early stopping after 579 epochs without improvement.
-      ```
+        ```
+        [Epoch 580/5000] :
+        Training time: 15.96 seconds
+        Train Loss: 0.0000 | Train Acc: 100.00%
+        Valid Loss: 2.5979 | Valid Acc: 75.64%
+        Test  Loss: 2.5924 | Test Acc: 75.46%
+        Early stopping after 579 epochs without improvement.
+        ```
       - Origin ResNet34
-      ```
-      [Epoch 506/5000] :
-      Training time: 11.10 seconds
-      Train Loss: 0.0040 | Train Acc: 99.89%
-      Valid Loss: 2.4615 | Valid Acc: 74.32%
-      Test  Loss: 2.3427 | Test Acc: 75.67%
-      Early stopping after 505 epochs without improvement.
-      ```
+        ```
+        [Epoch 506/5000] :
+        Training time: 11.10 seconds
+        Train Loss: 0.0040 | Train Acc: 99.89%
+        Valid Loss: 2.4615 | Valid Acc: 74.32%
+        Test  Loss: 2.3427 | Test Acc: 75.67%
+        Early stopping after 505 epochs without improvement.
+        ```
+    - Today's Goal : Validation set을 더 적극 활용해서 acc 높여보기.
+      - ㅇㅇㅇ...
 
-# The Question
+# 3. The Question
 - Implementation
   - [x] Why they use stride 2 in the downsample layer? 왜 downsampling된 블럭에선 stride=2인가?
     > input은 64,8,8이고 다운 샘플 이후엔 128,4,4가 되는데, 스트레치하면서 사이즈도 줄여야 하기 때문에 stride도 2임.
   - [x] final avg pooling : 7x7x512 -> 1x1x512 이게맞나? 현재 CIFAR들은 batch*512*1*1이라 확인불가.
     > pytorch가 adoptavgpool씀.
-  - [ ] 왜 제일 마지막 FC에 Relu넣으면 학습 아예 안 되지?
-- Training
-  
+  - [ ] 왜 제일 마지막 FC에 Relu넣으면 학습 아예 안 되지?  
 
 
-# Training Log
+# 4. Training Log
+<details>
+<summary>View_log</summary>
+<div markdown="1">
+
 - SGD
   ```
   optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
@@ -412,3 +460,7 @@
   |  avgpool                     |                        |  1.024K   |
 
   ```
+
+</div>
+</details>
+
