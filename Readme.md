@@ -184,22 +184,19 @@
         > Learning rate schedualing을 위해 train을 45k/5k로 split함.
       - Origin - ImageNet에서는 
         > split하지 않고, error 평평할 때에 lr만 10으로 나눴다고 함.
-          - [ ] The image is resized with its shorter side randomly sampled in [256, 480] for scale augmentation[41].
-            > [41] == VGG-16
-            >> 굉장히 다양한 train / test image size 경우 수를 실험함.
-            >> 맨 처음 부분에 single scale evaluation에서 256*256을 했었기에, 다양한 crop 구현 이전에 single scale 부터 구현해보자
-          - [x] A 224 x 224 crop is randomly sampled from an image or its horizontal flip, with the pre-pixel subtracted
-          - [ ] PCA : The standard color augmentation is used.
+          - [x] The image is resized with its shorter side randomly sampled in [256, 480] for scale augmentation[41] (VGG16).
+            > 굉장히 다양한 train / test image size 경우 수를 실험함.
+            > 맨 처음 부분에 single scale evaluation에서 256*256을 했었기에, 다양한 crop 구현 이전에 single scale 부터 구현해보자
+          - [x] A 224 x 224 crop is randomly sampled from an image or its horizontal flip, with the pre-pixel subtracted[21].
+          - [ ] PCA : The standard color augmentation is used[21].
+          - [ ] In testing, for comparison studies we adopt the standard 10-crop testing [21]. For best results, we adopt the fully- convolutional form as in [41, 13], and average the scores at multiple scales (images are resized such that the shorter side is in {224, 256, 384, 480, 640}).
+            >```RandomShortestSize(min_size=[224, 256, 384, 480, 640], antialias=True)```
+            > test image는 shortest side를 random한 것들 중 하나로 설정하고 학습 진행 시켜보자.
+            > 대신에 이미지가 정사각형이 아닌 탓에, 일부 미리보기 함수 실행 불가함. if문 처리완료.
+
+            > 근데 standard 10 crop이 뭐야???????????
+
     - ImageNet2012 학습 :
-      - Batch_size = 2048
-        - VRAM 1.8G
-        - 102m 소요...?
-        ```
-        [Epoch 1/5000] :
-        Training time: 6132.01 seconds
-        Train Loss: 6.3311 | Train Acc: 1.92%
-        Valid Loss: 43138.0477 | Valid Acc: 0.10%
-        ```
 
 # 3. The Question
 - Implementation
