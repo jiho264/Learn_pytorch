@@ -201,6 +201,179 @@
       - ```pin_memory = True```
       - AMP를 train, valid, test 중 train의 forward pass에만 적용
         >```https://tutorials.pytorch.kr/recipes/recipes/amp_recipe.html```
+      - Result
+        <details>
+        <summary>View_log</summary>
+        <div markdown="1">
+        
+        ```
+        [Epoch 1/5000] :
+        100%|██████████| 5005/5005 [31:36<00:00,  2.64it/s]  
+        Training time: 1896.06 seconds
+
+        Train Loss: 5.0520 | Train Acc: 10.57%
+        Valid Loss: 4.1285 | Valid Acc: 19.08%
+        --------------------------------------------------
+        [Epoch 2/5000] :
+        100%|██████████| 5005/5005 [31:53<00:00,  2.62it/s]  
+        Training time: 1913.53 seconds
+
+        Train Loss: 3.4389 | Train Acc: 29.41%
+        Valid Loss: 3.2756 | Valid Acc: 32.24%
+        --------------------------------------------------
+        [Epoch 3/5000] :
+        100%|██████████| 5005/5005 [31:52<00:00,  2.62it/s] 
+        Training time: 1912.65 seconds
+
+        Train Loss: 2.8673 | Train Acc: 38.72%
+        Valid Loss: 2.9369 | Valid Acc: 37.53%
+        --------------------------------------------------
+        [Epoch 4/5000] :
+        100%|██████████| 5005/5005 [31:47<00:00,  2.62it/s]  
+        Training time: 1907.72 seconds
+
+        Train Loss: 2.5655 | Train Acc: 43.98%
+        Valid Loss: 2.7002 | Valid Acc: 42.01%
+        --------------------------------------------------
+        [Epoch 5/5000] :
+        100%|██████████| 5005/5005 [31:57<00:00,  2.61it/s]  
+        Training time: 1917.39 seconds
+
+        Train Loss: 2.3769 | Train Acc: 47.49%
+        Valid Loss: 2.6047 | Valid Acc: 43.81%
+        --------------------------------------------------
+        [Epoch 6/5000] :
+        100%|██████████| 5005/5005 [31:52<00:00,  2.62it/s]  
+        Training time: 1912.09 seconds
+
+        Train Loss: 2.2411 | Train Acc: 49.98%
+        Valid Loss: 2.4968 | Valid Acc: 45.50%
+        --------------------------------------------------
+        [Epoch 7/5000] :
+        100%|██████████| 5005/5005 [31:45<00:00,  2.63it/s]  
+        Training time: 1905.85 seconds
+
+        Train Loss: 2.1333 | Train Acc: 52.01%
+        Valid Loss: 2.3975 | Valid Acc: 47.52%
+        --------------------------------------------------
+        [Epoch 8/5000] :
+        100%|██████████| 5005/5005 [32:03<00:00,  2.60it/s]  
+        Training time: 1923.20 seconds
+
+        Train Loss: 2.0504 | Train Acc: 53.66%
+        Valid Loss: 2.3488 | Valid Acc: 48.66%
+        --------------------------------------------------
+        [Epoch 9/5000] :
+        100%|██████████| 5005/5005 [31:59<00:00,  2.61it/s]  
+        Training time: 1919.83 seconds
+
+        Train Loss: 1.9795 | Train Acc: 55.06%
+        Valid Loss: 2.2641 | Valid Acc: 50.28%
+        --------------------------------------------------
+        [Epoch 10/5000] :
+        100%|██████████| 5005/5005 [31:49<00:00,  2.62it/s]  
+        Training time: 1909.26 seconds
+
+        Train Loss: 1.9176 | Train Acc: 56.24%
+        Valid Loss: 2.2093 | Valid Acc: 50.89%
+        --------------------------------------------------
+        [Epoch 11/5000] :
+        100%|██████████| 5005/5005 [31:41<00:00,  2.63it/s] 
+        Training time: 1901.61 seconds
+
+        Train Loss: 1.8663 | Train Acc: 57.24%
+        Valid Loss: 2.2001 | Valid Acc: 51.43%
+        --------------------------------------------------
+        [Epoch 12/5000] :
+        100%|██████████| 5005/5005 [31:47<00:00,  2.62it/s]  
+        Training time: 1907.24 seconds
+
+        Train Loss: 1.8199 | Train Acc: 58.16%
+        Valid Loss: 2.1337 | Valid Acc: 52.71%
+        --------------------------------------------------
+        [Epoch 13/5000] :
+        100%|██████████| 5005/5005 [31:48<00:00,  2.62it/s]  
+        Training time: 1908.69 seconds
+
+        Train Loss: 1.7792 | Train Acc: 58.98%
+        Valid Loss: 2.1074 | Valid Acc: 53.28%
+        --------------------------------------------------
+        [Epoch 14/5000] :
+        100%|██████████| 5005/5005 [31:44<00:00,  2.63it/s]  
+        Training time: 1904.05 seconds
+
+        Train Loss: 1.7457 | Train Acc: 59.67%
+        Valid Loss: 2.1988 | Valid Acc: 51.67%
+        --------------------------------------------------
+        [Epoch 15/5000] :
+        100%|██████████| 5005/5005 [31:44<00:00,  2.63it/s]  
+        Training time: 1904.48 seconds
+
+        Train Loss: 1.7096 | Train Acc: 60.34%
+        Valid Loss: 2.0708 | Valid Acc: 53.90%
+        --------------------------------------------------
+        [Epoch 16/5000] :
+        100%|██████████| 5005/5005 [31:38<00:00,  2.64it/s]  
+        Training time: 1898.62 seconds
+
+        Train Loss: 1.6800 | Train Acc: 60.97%
+        Valid Loss: 2.0372 | Valid Acc: 54.70%
+        --------------------------------------------------
+        [Epoch 17/5000] :
+        100%|██████████| 5005/5005 [31:54<00:00,  2.61it/s]  
+        Training time: 1914.32 seconds
+
+        Train Loss: 1.6508 | Train Acc: 61.55%
+        Valid Loss: 2.0250 | Valid Acc: 55.03%
+        --------------------------------------------------
+        [Epoch 18/5000] :
+        100%|██████████| 5005/5005 [31:52<00:00,  2.62it/s]  
+        Training time: 1912.92 seconds
+
+        Train Loss: 1.6258 | Train Acc: 62.02%
+        Valid Loss: 1.9895 | Valid Acc: 55.62%
+        --------------------------------------------------
+        [Epoch 19/5000] :
+        100%|██████████| 5005/5005 [31:48<00:00,  2.62it/s]  
+        Training time: 1908.16 seconds
+
+        Train Loss: 1.6020 | Train Acc: 62.45%
+        Valid Loss: 1.9957 | Valid Acc: 55.51%
+        --------------------------------------------------
+        [Epoch 20/5000] :
+        100%|██████████| 5005/5005 [31:53<00:00,  2.62it/s]  
+        Training time: 1913.79 seconds
+
+        Train Loss: 1.5833 | Train Acc: 62.91%
+        Valid Loss: 2.0135 | Valid Acc: 55.67%
+        --------------------------------------------------
+        [Epoch 21/5000] :
+        100%|██████████| 5005/5005 [32:06<00:00,  2.60it/s]  
+        Training time: 1926.44 seconds
+
+        Train Loss: 1.5631 | Train Acc: 63.31%
+        Valid Loss: 2.0481 | Valid Acc: 54.69%
+        --------------------------------------------------
+        [Epoch 22/5000] :
+        100%|██████████| 5005/5005 [31:55<00:00,  2.61it/s]  
+        Training time: 1915.16 seconds
+
+        Train Loss: 1.5394 | Train Acc: 63.78%
+        Valid Loss: 1.9796 | Valid Acc: 56.40%
+        --------------------------------------------------
+        [Epoch 23/5000] :
+        100%|██████████| 5005/5005 [32:00<00:00,  2.61it/s]  
+        Training time: 1920.08 seconds
+
+        Train Loss: 1.5245 | Train Acc: 64.11%
+        Valid Loss: 1.9787 | Valid Acc: 56.24%
+        --------------------------------------------------
+        [Epoch 24/5000] :
+         58%|█████▊    | 2908/5005 [18:24<07:46,  4.50it/s]  
+        ```
+        </div>
+        </details>
+
 
 # 3. The Question
 - Implementation
