@@ -107,60 +107,10 @@
   - ResNet 32 추가 (n에 따라 가변적으로 ResNet 생성 가능.) 
   - amp on/off 추가. ImageNet2012 학습하는 ResNet34일 때만 적용하도록 바꿈.
 
- 
-# 3. The Question
-- Implementation
-  - [x] Why they use stride 2 in the downsample layer? 왜 downsampling된 블럭에선 stride=2인가?
-    > input은 64,8,8이고 다운 샘플 이후엔 128,4,4가 되는데, 스트레치하면서 사이즈도 줄여야 하기 때문에 stride도 2임.
-  - [x] final avg pooling : 7x7x512 -> 1x1x512 이게맞나? 현재 CIFAR들은 batch*512*1*1이라 확인불가.
-    > pytorch가 adoptavgpool씀.
-  - [ ] 왜 제일 마지막 FC에 Relu넣으면 학습 아예 안 되지?  
-
-
-# 4. Training Log
-- SGD
-  ```python
-  optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-  ```
-  ```
-  Epoch 2740/5000:
-  Training time: 10.25 seconds
-  Train Loss: 0.0003 | Train Acc: 100.00%
-  Valid Loss: 1.5817 | Valid Acc: 68.84%
-  Test Loss: 1.5443 | Test Acc: 68.60%
-  ```
-  ---
-  ```python
-  optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-  scheduler = ReduceLROnPlateau(
-    optimizer,
-    mode="min",
-    patience=1000,
-    factor=0.1,
-    verbose=True,
-    threshold=1e-5,
-    min_lr=MIN_LR)
-  ```
-  ```
-  LR decay 엄격하게 제한한 것. -> 8nn epoch까지 lr = 0.1
-  [Epoch 875/5000] :
-  Training time: 10.27 seconds
-  Train Loss: 0.0258 | Train Acc: 99.17%
-  Valid Loss: 1.3594 | Valid Acc: 74.32%
-  Test  Loss: 1.3429 | Test Acc: 74.22%
-  --------------------------------------------------
-  ```
-- adam
-  ```
-  [Epoch 56/5000] :
-  Training time: 10.44 seconds
-  Train Loss: 0.0313 | Train Acc: 98.93%
-  Valid Loss: 1.6963 | Valid Acc: 71.88%
-  Test  Loss: 1.6655 | Test Acc: 71.65%
-  ```
 ---
+# 3. Training Log
 - ImageNet2012
-  - Adam 
+  - Adam default
     ```
     [Epoch 1/5000] :
     100%|██████████| 5005/5005 [31:36<00:00,  2.64it/s]  
@@ -175,4 +125,16 @@
 
     Train Loss: 1.5245 | Train Acc: 64.11%
     Valid Loss: 1.9787 | Valid Acc: 56.24%
+    ```
+- CIFAR10
+  - SGD
+    ```python
+    dd
+    ```
+    ```
+    dd
+    ```
+  - adam
+    ```
+    dd
     ```
