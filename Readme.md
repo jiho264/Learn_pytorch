@@ -107,15 +107,25 @@
        ```
 - Jan 12 :
   - ResNet 32 추가 (n에 따라 가변적으로 ResNet 생성 가능.) 
-    - Result :
-      - optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-      ```
-      [Epoch 112/5000] :
-      100%|██████████| 176/176 [00:06<00:00, 25.87it/s]
-      Train Loss: 0.0004 | Train Acc: 96.50%
-      Valid Loss: 1.4764 | Valid Acc: 72.50%
-      Test  Loss: 1.5016 | Test Acc: 72.05%
-      ```
+    - Results :
+      - optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001), early stop threshold 30
+        ```
+        [Epoch 112/5000] :
+        100%|██████████| 176/176 [00:06<00:00, 25.87it/s]
+        Train Loss: 0.0004 | Train Acc: 96.50%
+        Valid Loss: 1.4764 | Valid Acc: 72.50%
+        Test  Loss: 1.5016 | Test Acc: 72.05%
+        Early stopping after 111 epochs without improvement.
+        ```
+      - optimizer = torch.optim.Adam(model.parameters()), early stop threshold 30
+        ```
+        [Epoch 109/5000] :
+        100%|██████████| 176/176 [00:06<00:00, 25.57it/s]
+        Train Loss: 0.0000 | Train Acc: 100.00%
+        Valid Loss: 1.5166 | Valid Acc: 79.00%
+        Test  Loss: 1.5319 | Test Acc: 78.46%
+        Early stopping after 108 epochs without improvement.
+        ```
   - amp on/off 추가. ImageNet2012 학습하는 ResNet34일 때만 적용하도록 바꿈.
 ---
 # 3. Training Log
