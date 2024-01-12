@@ -4,9 +4,10 @@
 
 > jiho264@inu.ac.kr /  jiho264@naver.com
  
-- The purpose of this project is to create a ResNet32 model using Pytorch.
+- The purpose of this project is to create a ResNet34 model using Pytorch.
 - The Goal of this project is that to get the accuracy of near original paper's accuracy.
-- The Origin Model have 7.51% error rate in CIFAR-10 dataset.
+- The Origin ResNet32 have 7.51% top-1 error rate in CIFAR-10 dataset.
+- The Origin ResNet34 have 21.53% top-1 error rate in ImageNet2012 dataset.
 ---
 ### Todo : 
 - [ ] optimazer setting 재확인하기. 현재 Adam의 기본옵션임.
