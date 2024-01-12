@@ -20,7 +20,7 @@
   - ```Python 3.11.5```
   - ```Pytorch 2.1.1```
   - ```CUDA 11.8```
-  - ```pip [sklearn, copy, time]```
+  - ```pip [sklearn, copy, time, tqdm, matplotlib]```
   - ```/data/ImageNet2012/train```
   - ```/data/ImageNet2012/val```
 ## 1.2. How to run 
@@ -44,7 +44,7 @@
     > [21] AlexNet - Dataset section
     >> We did not pre-process the images in any other way, except for subtracting the mean activity over the training set from each pixel. 
     >> So we trained our network on the (centered) raw RGB values of the pixels.
-  - [x] The standard color augmentation in [21] is used.
+  - [ ] The standard color augmentation in [21] is used.
     > 1. Crop + resizeing
     > 2. Principal Components Analysis (PCA 개념참고 : https://ddongwon.tistory.com/114 )
   - [ ] In testing, for comparison studies we adopt the standard 10-crop testing [21]. For best results, we adopt the fully- convolutional form as in [41, 13], and average the scores at multiple scales (images are resized such that the shorter side is in {224, 256, 384, 480, 640}).
