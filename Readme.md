@@ -127,6 +127,10 @@
         Early stopping after 108 epochs without improvement.
         ```
   - amp on/off 추가. ImageNet2012 학습하는 ResNet34일 때만 적용하도록 바꿈.
+- Jan 13 : 
+  - ResNet32 for CIFAR10
+    - train만 전처리 하고, valid, test에 ToTensor()만 적용시 507 epoch에서 stop되었고 acc 각각 100%, 80%, 58%로 나타남.
+    - 
 ---
 # 3. Training Log
 - ImageNet2012
