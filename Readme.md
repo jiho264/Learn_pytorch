@@ -129,8 +129,13 @@
   - amp on/off 추가. ImageNet2012 학습하는 ResNet34일 때만 적용하도록 바꿈.
 - Jan 13 : 
   - ResNet32 for CIFAR10
-    - train만 전처리 하고, valid, test에 ToTensor()만 적용시 507 epoch에서 stop되었고 acc 각각 100%, 80%, 58%로 나타남.
-    - 
+    - Setup 1
+      - train만 전처리 하고, valid, test에 ToTensor()만 적용시 507 epoch에서 stop되었고 acc 각각 100%, 80%, 58%로 나타남.
+      - on CIFAR10에서 testing시, origin image 32x32x3 썼다고했는데, submean을 하지 않고서는 도저히 이렇게 나오지 않는다. 
+      - Submean하는게 맞는 것 같다.
+    - Setup 2
+      - valid, test 모두 Submean 적용
+      - 509 epochs test acc 75.42%
 ---
 # 3. Training Log
 - ImageNet2012
