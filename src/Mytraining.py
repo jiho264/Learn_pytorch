@@ -108,7 +108,9 @@ class DoTraining:
 
         # Save the model (checkpoint) and logs
         self.Save(self.file_path)
+
         # Learning rate scheduler
-        self.scheduler.step(self.valid_loss)
+        if self.scheduler != None:
+            self.scheduler.step(self.valid_loss)
 
         return
