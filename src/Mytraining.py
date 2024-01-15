@@ -22,7 +22,6 @@ class DoTraining:
         self.device = device
         self.logs = logs
         self.file_path = file_path
-        self.valid_loss = 0.0
 
     def Forward_train(self, dataset):
         # Training loop @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -49,14 +48,11 @@ class DoTraining:
         train_loss = running_loss / len(dataset)
         train_acc = correct / total
 
-        self.logs["train_loss"].append(train_loss)
-        self.logs["train_acc"].append(train_acc)
-        print(f"Train Loss: {train_loss:.4f} | Train Acc: {train_acc*100:.2f}%")
-        return
+        return train_loss, train_acc
 
     def Forward_eval(self, dataset, test=False):
         self.model.eval()
-        valid_loss = 0.0
+        eval_loss = 0.0
         correct = 0
         total = 0
 
@@ -67,27 +63,15 @@ class DoTraining:
                 outputs = self.model(images)
                 loss = self.criterion(outputs, labels)
 
-                valid_loss += loss.item()
+                eval_loss += loss.item()
                 _, predicted = outputs.max(1)
                 total += labels.size(0)
                 correct += predicted.eq(labels).sum().item()
 
-        valid_loss /= len(dataset)
-        valid_acc = correct / total
+        eval_loss /= len(dataset)
+        eval_acc = correct / total
 
-        if test == True:
-            self.logs["test_loss"].append(valid_loss)
-            self.logs["test_acc"].append(valid_acc)
-            print(f"Test  Loss: {valid_loss:.4f} | Test Acc: {valid_acc*100:.2f}%")
-        else:
-            self.valid_loss = valid_loss
-            self.logs["valid_loss"].append(self.valid_loss)
-            self.logs["valid_acc"].append(valid_acc)
-            print(
-                f"Valid Loss: {self.valid_loss:.4f} | Valid Acc: {valid_acc*100:.2f}%"
-            )
-
-        return
+        return eval_loss, eval_acc
 
     def Save(self, file_path):
         checkpoint = {
@@ -100,17 +84,33 @@ class DoTraining:
         torch.save(checkpoint, "logs/" + file_path + ".pth.tar")
         print(f"Saved PyTorch Model State to [logs/{file_path}.pth.tar]")
 
+        return
+
     def SingleEpoch(self, train_dataloader, valid_dataloader, test_dataloader=None):
-        self.Forward_train(train_dataloader)
-        self.Forward_eval(valid_dataloader)
+        train_loss, train_acc = self.Forward_train(train_dataloader)
+        valid_loss, valid_acc = self.Forward_eval(valid_dataloader)
         if test_dataloader != None:
-            self.Forward_eval(test_dataloader, test=True)
+            test_loss, test_acc = self.Forward_eval(test_dataloader, test=True)
+        ############################################################################
+        self.logs["train_loss"].append(train_loss)
+        self.logs["train_acc"].append(train_acc)
+        print(f"Train Loss: {train_loss:.4f} | Train Acc: {train_acc*100:.2f}%")
+
+        self.logs["valid_loss"].append(valid_loss)
+        self.logs["valid_acc"].append(valid_acc)
+        print(f"Valid Loss: {valid_loss:.4f} | Valid Acc: {valid_acc*100:.2f}%")
+
+        if test_dataloader != None:
+            self.logs["test_loss"].append(test_loss)
+            self.logs["test_acc"].append(test_acc)
+            print(f"Test  Loss: {test_loss:.4f} | Test Acc: {test_acc*100:.2f}%")
+        ############################################################################
 
         # Save the model (checkpoint) and logs
         self.Save(self.file_path)
 
         # Learning rate scheduler
         if self.scheduler != None:
-            self.scheduler.step(self.valid_loss)
+            self.scheduler.step(valid_loss)
 
-        return
+        return valid_loss

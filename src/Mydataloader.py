@@ -77,7 +77,7 @@ class LoadDataset:
         self.dataset_name = seceted_dataset
 
         if self.dataset_name[:5] == "CIFAR":
-            self.split_ratio = 0.9
+            self.split_ratio = 0.95
             dataset_mapping = {
                 "CIFAR100": datasets.CIFAR100,
                 "CIFAR10": datasets.CIFAR10,
