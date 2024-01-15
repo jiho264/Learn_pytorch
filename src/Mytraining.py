@@ -86,21 +86,25 @@ class DoTraining:
 
         return
 
-    def SingleEpoch(self, train_dataloader, valid_dataloader, test_dataloader=None):
+    def SingleEpoch(
+        self, train_dataloader, valid_dataloader=None, test_dataloader=None
+    ):
+        if valid_dataloader == None and test_dataloader == None:
+            raise ValueError("No valid/test dataset")
+
         train_loss, train_acc = self.Forward_train(train_dataloader)
-        valid_loss, valid_acc = self.Forward_eval(valid_dataloader)
-        if test_dataloader != None:
-            test_loss, test_acc = self.Forward_eval(test_dataloader, test=True)
-        ############################################################################
         self.logs["train_loss"].append(train_loss)
         self.logs["train_acc"].append(train_acc)
         print(f"Train Loss: {train_loss:.4f} | Train Acc: {train_acc*100:.2f}%")
 
-        self.logs["valid_loss"].append(valid_loss)
-        self.logs["valid_acc"].append(valid_acc)
-        print(f"Valid Loss: {valid_loss:.4f} | Valid Acc: {valid_acc*100:.2f}%")
+        if valid_dataloader != None:
+            valid_loss, valid_acc = self.Forward_eval(valid_dataloader)
+            self.logs["valid_loss"].append(valid_loss)
+            self.logs["valid_acc"].append(valid_acc)
+            print(f"Valid Loss: {valid_loss:.4f} | Valid Acc: {valid_acc*100:.2f}%")
 
         if test_dataloader != None:
+            test_loss, test_acc = self.Forward_eval(test_dataloader, test=True)
             self.logs["test_loss"].append(test_loss)
             self.logs["test_acc"].append(test_acc)
             print(f"Test  Loss: {test_loss:.4f} | Test Acc: {test_acc*100:.2f}%")
@@ -109,8 +113,13 @@ class DoTraining:
         # Save the model (checkpoint) and logs
         self.Save(self.file_path)
 
+        if valid_dataloader != None:
+            eval_loss = valid_loss
+        if valid_dataloader == None and test_dataloader != None:
+            eval_loss = test_loss
+
         # Learning rate scheduler
         if self.scheduler != None:
-            self.scheduler.step(valid_loss)
+            self.scheduler.step(eval_loss)
 
-        return valid_loss
+        return eval_loss
