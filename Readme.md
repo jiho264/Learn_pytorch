@@ -138,7 +138,8 @@
       - 509 epochs test acc 75.42%
 - Jan 15 : 
   - build training logging process 
-  - Model, Dataloader 둘 다 별도 py파일로 분리시킴
+  - Model, Dataloader 둘 다 별도 py파일로 분리시킴.
+  - case별 실험 및 비교위한 코드 정리 및 재정의 수행.
 ---
 # 3. Training Log
 - ImageNet2012
