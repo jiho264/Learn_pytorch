@@ -136,6 +136,8 @@
     - Setup 2
       - valid, test 모두 Submean 적용
       - 509 epochs test acc 75.42%
+- Jan 15 : 
+  - build training logging process 
 ---
 # 3. Training Log
 - ImageNet2012
