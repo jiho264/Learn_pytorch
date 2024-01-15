@@ -9,6 +9,7 @@ class DoTraining:
         criterion,
         optimizer,
         scaler=None,
+        scheduler=None,
         device="cuda",
         logs=None,
         file_path=None,
@@ -17,6 +18,7 @@ class DoTraining:
         self.criterion = criterion
         self.optimizer = optimizer
         self.scaler = scaler
+        self.scheduler = scheduler
         self.device = device
         self.logs = logs
         self.file_path = file_path
