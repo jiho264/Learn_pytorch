@@ -72,12 +72,12 @@ class LoadDataset:
         - num of classes
     """
 
-    def __init__(self, root, seceted_dataset="CIFAR100"):
+    def __init__(self, root, seceted_dataset, split_ratio=0):
         self.Randp = 0.5
         self.dataset_name = seceted_dataset
+        self.split_ratio = split_ratio
 
         if self.dataset_name[:5] == "CIFAR":
-            self.split_ratio = 0.95
             dataset_mapping = {
                 "CIFAR100": datasets.CIFAR100,
                 "CIFAR10": datasets.CIFAR10,
@@ -102,33 +102,38 @@ class LoadDataset:
                 download=False,
                 transform=cifar_default_transforms,
             )
-            # Split to train and valid set
-            total_length = len(ref_train)
-            train_length = int(total_length * self.split_ratio)
-            valid_length = total_length - train_length
-            self.train_data, self.valid_data = random_split(
-                ref_train, [train_length, valid_length]
-            )
-            # Apply transform at each dataset
-            self.train_data.transform = copy.deepcopy(cifar_default_transforms)
-            self.valid_data.transform = copy.deepcopy(cifar_default_transforms)
 
-            ####### 둘 중 하나 골라서 #################################
-            # self.train_data.transform.transforms.append(PaddingWithRandomResizedCrop([32, 32]))
-            self.train_data.transform.transforms.append(
-                AutoAugment(policy=AutoAugmentPolicy.CIFAR10)
-            )
+            if self.split_ratio != 0:
+                # Split to train and valid set
+                total_length = len(ref_train)
+                train_length = int(total_length * self.split_ratio)
+                valid_length = total_length - train_length
+                self.train_data, self.valid_data = random_split(
+                    ref_train, [train_length, valid_length]
+                )
+                # Apply transform at each dataset
+                self.train_data.transform = copy.deepcopy(cifar_default_transforms)
+                self.valid_data.transform = copy.deepcopy(cifar_default_transforms)
+
+                ####### 둘 중 하나 골라서 #################################
+                # self.train_data.transform.transforms.append(PaddingWithRandomResizedCrop([32, 32]))
+                self.train_data.transform.transforms.append(
+                    AutoAugment(policy=AutoAugmentPolicy.CIFAR10)
+                )  # Copy classes data
+                self.train_data.classes = ref_train.classes
+                self.valid_data.classes = ref_train.classes
+
+                self.train_data.class_to_idx = ref_train.class_to_idx
+                self.valid_data.class_to_idx = ref_train.class_to_idx
+
+            else:
+                self.train_data = ref_train
+                self.valid_data = None
             #######################################################
 
             self.train_data.transform.transforms.append(
                 RandomHorizontalFlip(self.Randp),
             )
-            # Copy classes data
-            self.train_data.classes = ref_train.classes
-            self.valid_data.classes = ref_train.classes
-
-            self.train_data.class_to_idx = ref_train.class_to_idx
-            self.valid_data.class_to_idx = ref_train.class_to_idx
 
         elif self.dataset_name == "ImageNet2012":
             self.ImageNetRoot = "data/" + self.dataset_name + "/"
@@ -173,7 +178,8 @@ class LoadDataset:
             )
             print("Dataset : ", self.dataset_name)
             print("- Length of Train Set : ", len(self.train_data))
-            print("- Length of Valid Set : ", len(self.valid_data))
+            if self.split_ratio != 0:
+                print("- Length of Valid Set : ", len(self.valid_data))
             if self.dataset_name == "ImageNet":
                 pass
             else:
