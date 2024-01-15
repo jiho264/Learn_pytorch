@@ -2,7 +2,6 @@ import copy
 import torch
 from torch import nn
 import torch.nn.functional as F
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader, random_split
 from torchvision import datasets
 from torchvision.transforms.v2 import (
@@ -13,13 +12,7 @@ from torchvision.transforms.v2 import (
     RandomShortestSize,
     AutoAugment,
 )
-
 from torchvision.transforms.autoaugment import AutoAugmentPolicy
-from fvcore.nn import FlopCountAnalysis, flop_count_table
-import numpy as np
-import matplotlib.pyplot as plt
-import tqdm
-import os
 
 
 class Submean(torch.nn.Module):
