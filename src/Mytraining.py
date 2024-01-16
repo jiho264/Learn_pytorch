@@ -10,6 +10,7 @@ class DoTraining:
         optimizer,
         scaler=None,
         scheduler=None,
+        earlystopper=None,
         device="cuda",
         logs=None,
         file_path=None,
@@ -19,6 +20,7 @@ class DoTraining:
         self.optimizer = optimizer
         self.scaler = scaler
         self.scheduler = scheduler
+        self.earlystopper = earlystopper
         self.device = device
         self.logs = logs
         self.file_path = file_path
@@ -73,15 +75,17 @@ class DoTraining:
 
         return eval_loss, eval_acc
 
-    def Save(self, file_path):
+    def Save(self):
         checkpoint = {
             "model": self.model.state_dict(),
             "optimizer": self.optimizer.state_dict(),
             "scaler": self.scaler.state_dict(),
+            "scheduler": self.scheduler.state_dict(),
+            "earlystopper": self.earlystopper.state_dict(),
             "logs": self.logs,
         }
 
-        torch.save(checkpoint, "logs/" + file_path + ".pth.tar")
+        torch.save(checkpoint, "logs/" + self.file_path + ".pth.tar")
         # print(f"Saved PyTorch Model State to [logs/{file_path}.pth.tar]")
 
         return
@@ -111,7 +115,7 @@ class DoTraining:
         ############################################################################
 
         # Save the model (checkpoint) and logs
-        self.Save(self.file_path)
+        # self.Save(self.file_path)
 
         if valid_dataloader != None:
             eval_loss = valid_loss
