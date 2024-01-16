@@ -126,37 +126,27 @@
   - Adam [Early stop cnt 1200] & [without lr scheduler]
     - with Weight Decay (lamda=0.0001) and non-split
       ```
-      optimizer = torch.optim.Adam(model.parameters())
-      [Epoch 2397/5000] :
-      100%|██████████| 196/196 [00:11<00:00, 16.98it/s]
-      Train Loss: 0.0002 | Train Acc: 98.75%
-      Test  Loss: 0.5759 | Test Acc: 87.54%
-      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay.pth.tar]
-      ```
-      - 이거 2480 epochs에서 lr 0.001->0.0001로 감소시킴 + 2480e_lr1e-4_backup
-      - > 큰 변화 없음;; 다시 돌려놓음
-        ```
-        - [Epoch 2492/5000] :
-        100%|██████████| 196/196 [00:09<00:00, 19.66it/s]
-        Train Loss: 0.0000 | Train Acc: 100.00%
-        Test  Loss: 0.5134 | Test Acc: 89.01%
-        ```
-    - with Weight Decay (lamda=0.0001) and split ratio 95/5
-      ```
       optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)
       [Epoch 3694/5000] :
       100%|██████████| 196/196 [00:07<00:00, 27.90it/s]
       Train Loss: 0.0000 | Train Acc: 100.00%
       Test  Loss: 0.6184 | Test Acc: 87.33%
       Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay.pth.tar]
-      Early stopping after 0 epochs without improvement.
       ```
-    - Adam 논문에서는 Learning Rate alpha가 어떻게 변화하는가? 왜 lr의 재정의가 필요없다고 했는가?
-    - 왜 Adam보다 SGD가 더 학습이 잘 되었는가?
+    - with Weight Decay (lamda=0.0001) and split ratio 95/5
+      ```
+      optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)
+      [Epoch 1778/5000] :
+      100%|██████████| 186/186 [00:19<00:00,  9.47it/s]
+      Train Loss: 0.0003 | Train Acc: 97.86%
+      Valid Loss: 0.8610 | Valid Acc: 83.04%
+      Test  Loss: 0.9266 | Test Acc: 82.60%
+      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay_95.pth.tar]
+      ```
   - 하나 알게된 것 : 동일 모델을 test할 때마다 loss가 소숫점 2자리대까지 바뀌는 것을 확인함. 
     > 동일 weights이어도, 컴퓨터 계산의 한계 때문에 오차 발생하는 것으로 보임
   - SGD
-    - ~5000 epochs
+    - [1] ~5000 epochs
       > MyResNet32_256_SGD_5k
       ```
       [Epoch 5000/50000] :
@@ -164,28 +154,28 @@
       Train Loss: 0.0001 | Train Acc: 100.00%
       Test  Loss: 0.5109 | Test Acc: 87.69%
       ```
-      - [1] 5000 epochs~
-        > lr 0.1에서 0.01로 조정하니 바로 acc 88%대에서 90.8%대로 single epoch 만에 상승함.
-        > 기존 lr 0.1로 5k epochs까지 학습시킨 것 백업해둠.
-        >> MyResNet32_256_SGD_!5k_lr01
-        ```
-        [Epoch 5239/50000] :
-        100%|██████████| 196/196 [00:06<00:00, 28.46it/s]
-        Train Loss: 0.0000 | Train Acc: 100.00%
-        Test  Loss: 0.3112 | Test Acc: 91.41%
-        ```
-      - [2] 적극적인 lr reduce
-        > 0~5k = 0.1
-        > 5k~ = LR scheduler의 patiance를 30으로 함.
-        ```
-        [1st reducing]
-        [Epoch 5033/50000] :
-        100%|██████████| 196/196 [00:06<00:00, 28.26it/s]
-        Train Loss: 0.0002 | Train Acc: 100.00%
-        Test  Loss: 0.6317 | Test Acc: 86.16%
-        Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_SGD.pth.tar]
-        Epoch 00033: reducing learning rate of group 0 to 1.0000e-02.
-        ```
+    - [2] 5000 epochs 이후 적극적인 lr reduce
+      > 0~5k = 0.1
+      > 5k~ = LR scheduler의 patiance를 30으로 함.
+      ```
+      [1st reducing]
+      [Epoch 5033/50000] :
+      100%|██████████| 196/196 [00:06<00:00, 28.26it/s]
+      Train Loss: 0.0002 | Train Acc: 100.00%
+      Test  Loss: 0.6317 | Test Acc: 86.16%
+      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_SGD.pth.tar]
+      Epoch 00033: reducing learning rate of group 0 to 1.0000e-02.
+      ```
+      ```
+      lr = 0.01
+      [Epoch 5671/50000] :
+      100%|██████████| 196/196 [00:03<00:00, 50.76it/s]
+      Train Loss: 0.0000 | Train Acc: 100.00%
+      Test  Loss: 0.3135 | Test Acc: 91.14%
+      ```
+  - Q1 : Adam 논문에서는 Learning Rate alpha가 어떻게 변화하는가? 왜 lr의 재정의가 필요없다고 했는가?
+  - Q2 : 왜 Adam보다 SGD가 더 학습이 잘 되었는가?
+
 # 3. Training Log
 - ImageNet2012
   - Adam default
