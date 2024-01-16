@@ -114,7 +114,9 @@ class LoadDataset:
                 # Apply transform at each dataset
                 self.train_data.transform = copy.deepcopy(cifar_default_transforms)
                 self.valid_data.transform = copy.deepcopy(cifar_default_transforms)
-
+                self.train_data.transform.transforms.append(
+                    RandomHorizontalFlip(self.Randp),
+                )
                 ####### 둘 중 하나 골라서 #################################
                 # self.train_data.transform.transforms.append(PaddingWithRandomResizedCrop([32, 32]))
                 self.train_data.transform.transforms.append(
@@ -128,12 +130,12 @@ class LoadDataset:
 
             else:
                 self.train_data = ref_train
+                self.train_data.transform = copy.deepcopy(cifar_default_transforms)
+                self.train_data.transform.transforms.append(
+                    RandomHorizontalFlip(self.Randp),
+                )
                 self.valid_data = None
             #######################################################
-
-            self.train_data.transform.transforms.append(
-                RandomHorizontalFlip(self.Randp),
-            )
 
         elif self.dataset_name == "ImageNet2012":
             self.ImageNetRoot = "data/" + self.dataset_name + "/"
