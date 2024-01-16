@@ -123,25 +123,28 @@
   - Model, Dataloader 둘 다 별도 py파일로 분리시킴.
   - case별 실험 및 비교위한 코드 정리 및 재정의 수행.
 - Jan 16 :
-  - [Early stop cnt 1200] Adam with Weight Decay (lamda=0.0001) and non-split
-    ```
-    optimizer = torch.optim.Adam(model.parameters())
-    [Epoch 2397/5000] :
-    100%|██████████| 196/196 [00:11<00:00, 16.98it/s]
-    Train Loss: 0.0002 | Train Acc: 98.75%
-    Test  Loss: 0.5759 | Test Acc: 87.54%
-    Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay.pth.tar]
-    ```
-  - [Early stop cnt 1200] Adam with Weight Decay (lamda=0.0001) and split ratio 95/5
-    ```
-    optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)
-    [Epoch 1778/5000] :
-    100%|██████████| 186/186 [00:19<00:00,  9.47it/s]
-    Train Loss: 0.0003 | Train Acc: 97.86%
-    Valid Loss: 0.8610 | Valid Acc: 83.04%
-    Test  Loss: 0.9266 | Test Acc: 82.60%
-    Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay_95.pth.tar]
-    ```
+  - Adam [Early stop cnt 1200] & [without lr scheduler]
+    - with Weight Decay (lamda=0.0001) and non-split
+      ```
+      optimizer = torch.optim.Adam(model.parameters())
+      [Epoch 2397/5000] :
+      100%|██████████| 196/196 [00:11<00:00, 16.98it/s]
+      Train Loss: 0.0002 | Train Acc: 98.75%
+      Test  Loss: 0.5759 | Test Acc: 87.54%
+      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay.pth.tar]
+      ```
+    - with Weight Decay (lamda=0.0001) and split ratio 95/5
+      ```
+      optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)
+      [Epoch 1778/5000] :
+      100%|██████████| 186/186 [00:19<00:00,  9.47it/s]
+      Train Loss: 0.0003 | Train Acc: 97.86%
+      Valid Loss: 0.8610 | Valid Acc: 83.04%
+      Test  Loss: 0.9266 | Test Acc: 82.60%
+      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay_95.pth.tar]
+      ```
+  - Adam 논문에서는 Learning Rate alpha가 어떻게 변화하는가? 왜 lr의 재정의가 필요없다고 했는가?
+  - 왜 Adam보다 SGD가 더 학습이 잘 되었는가?
 ---
 # 3. Training Log
 - ImageNet2012
