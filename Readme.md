@@ -133,6 +133,14 @@
       Test  Loss: 0.5759 | Test Acc: 87.54%
       Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay.pth.tar]
       ```
+      - 이거 2480 epochs에서 lr 0.001->0.0001로 감소시킴 + 2480e_lr1e-4_backup
+      - > 큰 변화 없음;; 다시 돌려놓음
+        ```
+        - [Epoch 2492/5000] :
+        100%|██████████| 196/196 [00:09<00:00, 19.66it/s]
+        Train Loss: 0.0000 | Train Acc: 100.00%
+        Test  Loss: 0.5134 | Test Acc: 89.01%
+        ```
     - with Weight Decay (lamda=0.0001) and split ratio 95/5
       ```
       optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)
@@ -143,9 +151,32 @@
       Test  Loss: 0.9266 | Test Acc: 82.60%
       Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay_95.pth.tar]
       ```
-  - Adam 논문에서는 Learning Rate alpha가 어떻게 변화하는가? 왜 lr의 재정의가 필요없다고 했는가?
-  - 왜 Adam보다 SGD가 더 학습이 잘 되었는가?
----
+    - Adam 논문에서는 Learning Rate alpha가 어떻게 변화하는가? 왜 lr의 재정의가 필요없다고 했는가?
+    - 왜 Adam보다 SGD가 더 학습이 잘 되었는가?
+  - 하나 알게된 것 : 동일 모델을 test할 때마다 loss가 소숫점 2자리대까지 바뀌는 것을 확인함. 
+    > 동일 weights이어도, 컴퓨터 계산의 한계 때문에 오차 발생하는 것으로 보임
+  - SGD
+    - 학습하던 것이 정체된 것으로 판단해 lr조정 시도
+      > lr 0.1에서 0.01로 조정하니 바로 acc 88%대에서 90.8%대로 single epoch 만에 상승함.
+      > 기존 lr 0.1로 5k epochs까지 학습시킨 것 백업해둠.
+      >> MyResNet32_256_SGD_5k_lr01
+      ```
+      [Epoch 5207/5000] :
+      100%|██████████| 196/196 [00:08<00:00, 21.99it/s]
+      Train Loss: 0.0000 | Train Acc: 100.00%
+      Test  Loss: 0.3144 | Test Acc: 91.21%
+      ```
+      > 5210epochs에서 lr0.001로 조정 
+      >> MyResNet32_256_SGD_5k_lr01_5210_lr001
+      ```
+      [Epoch 5219/5000] :
+      100%|██████████| 196/196 [00:08<00:00, 22.28it/s]
+      Train Loss: 0.0000 | Train Acc: 100.00%
+      Test  Loss: 0.3117 | Test Acc: 91.35%
+      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_SGD.pth.tar]
+      0.311735481931828
+      ```
+
 # 3. Training Log
 - ImageNet2012
   - Adam default
