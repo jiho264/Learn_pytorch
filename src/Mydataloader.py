@@ -11,6 +11,8 @@ from torchvision.transforms.v2 import (
     RandomResizedCrop,
     RandomShortestSize,
     AutoAugment,
+    TenCrop,
+    FiveCrop,
 )
 from torchvision.transforms.autoaugment import AutoAugmentPolicy
 
@@ -30,8 +32,14 @@ class Submean(torch.nn.Module):
 
 class PaddingWithRandomResizedCrop(RandomResizedCrop):
     # Add padding to the image
-    def __call__(self, img):
-        img = F.pad(img, (4, 4, 4, 4), mode="constant", value=0)
+    # CIFAR 용
+    # def __call__(self, img):
+    #     img = F.pad(img, (4, 4, 4, 4), mode="constant", value=0)
+    #     return super().__call__(img)
+
+    # ImageNet 용
+    def __call__(self, pad, img):
+        img = F.pad(img, (pad, pad, pad, pad), mode="constant", value=0)
         return super().__call__(img)
 
 
@@ -153,20 +161,65 @@ class LoadDataset:
                     ]
                 ),
             )
+            """
+            TypeError: PaddingWithRandomResizedCrop.__call__() missing 1 required positional argument: 'img'
+
+            """
             self.valid_data = datasets.ImageFolder(
                 root=self.ImageNetRoot + "val",
                 transform=Compose(
                     [
                         ToTensor(),
                         Submean(),
-                        # RandomShortestSize(
-                        #     min_size=[224, 256, 384, 480, 640], antialias=True
-                        # ),
-                        # RandomResizedCrop([224, 224], antialias=True),
+                        RandomShortestSize(min_size=368, max_size=368, antialias=True),
+                        PaddingWithRandomResizedCrop(46, [368, 368]),
                     ]
                 ),
             )
             self.test_data = self.valid_data
+            # """
+            # 완전 학습 종료 뒤 10crop + 멀티스케일
+            # 학습중에는 single scale evaluation만 진행하기.
+            # dataloader 마저 적고, 학습돌리고 집에가기
+            # """
+            # ref_test_data = datasets.ImageFolder(
+            #     root=self.ImageNetRoot + "val",
+            #     transform=Compose(
+            #         [
+            #             ToTensor(),
+            #             Submean(),
+            #         ]
+            #     ),
+            # )
+
+            # _test_data = [None, None, None, None, None]
+
+            # _scale = [224, 256, 384, 480, 640]
+            # for i in range(len(_scale)):
+            #     print(i)
+            #     _test_data[i] = copy.deepcopy(ref_test_data)
+            # """
+            # padding은 이미지 크기의 1/8주고, 10crop
+            # """
+
+            # self.test_data = torch.utils.data.ConcatDataset([_test_data])
+            # self.test_data.classes = self.train_data.classes
+            # self.test_data.class_to_idx = self.train_data.class_to_idx
+
+            # for i in range(len(_scale)):
+            #     self.test_data.datasets[i] = copy.deepcopy(ref_test_data)
+            #     self.test_data.datasets[i].transform.transforms.append(
+            #         RandomShortestSize(min_size=_scale[i], antialias=True)
+            #     )
+            #     self.test_data.datasets[i].transform.transforms.append(
+            #         PaddingWithRandomResizedCrop(_scale[i] / 8, [_scale[i], _scale[i]])
+            #     )
+            #     self.test_data.datasets[i].transform.transforms.append(
+            #         TenCrop(_scale[i])
+            #     )
+            # """
+            # padding은 이미지 크기의 1/8주고, 10crop
+            # """
 
         else:
             raise ValueError(f"Unsupported dataset: {self.dataset_name}")
@@ -180,7 +233,7 @@ class LoadDataset:
             )
             print("Dataset : ", self.dataset_name)
             print("- Length of Train Set : ", len(self.train_data))
-            if self.split_ratio != 0:
+            if self.split_ratio != 0 or self.dataset_name == "ImageNet":
                 print("- Length of Valid Set : ", len(self.valid_data))
             if self.dataset_name == "ImageNet":
                 pass
