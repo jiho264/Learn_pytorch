@@ -8,7 +8,7 @@ def clear_directory(directory):
             os.remove(file_path)
 
 
-directory = "/home/lee/Desktop/Learn_pytorch"
+# directory = "/home/lee/Desktop/Learn_pytorch"
 
 clear_directory(os.path.join(directory, "logs"))
 clear_directory(os.path.join(directory, "models"))
