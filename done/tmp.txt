@@ -1,0 +1,2 @@
+tmp_ file is 
+split ratio에 따른 validation 작업 유의미하게 하고있지 않아서, 실험결과 폐기하고자 함.
