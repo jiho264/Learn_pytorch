@@ -157,25 +157,24 @@
     > 동일 weights이어도, 컴퓨터 계산의 한계 때문에 오차 발생하는 것으로 보임
   - SGD
     - 학습하던 것이 정체된 것으로 판단해 lr조정 시도
-      > lr 0.1에서 0.01로 조정하니 바로 acc 88%대에서 90.8%대로 single epoch 만에 상승함.
-      > 기존 lr 0.1로 5k epochs까지 학습시킨 것 백업해둠.
-      >> MyResNet32_256_SGD_5k_lr01
+      - ~5k epochs
       ```
       [Epoch 5207/5000] :
       100%|██████████| 196/196 [00:08<00:00, 21.99it/s]
       Train Loss: 0.0000 | Train Acc: 100.00%
       Test  Loss: 0.3144 | Test Acc: 91.21%
       ```
-      > 5210epochs에서 lr0.001로 조정 
-      >> MyResNet32_256_SGD_5k_lr01_5210_lr001
+      - 5k
+      > lr 0.1에서 0.01로 조정하니 바로 acc 88%대에서 90.8%대로 single epoch 만에 상승함.
+      > 기존 lr 0.1로 5k epochs까지 학습시킨 것 백업해둠.
+      >> MyResNet32_256_SGD_!5k_lr01
       ```
-      [Epoch 5219/5000] :
-      100%|██████████| 196/196 [00:08<00:00, 22.28it/s]
+      [Epoch 5207/5000] :
+      100%|██████████| 196/196 [00:08<00:00, 21.99it/s]
       Train Loss: 0.0000 | Train Acc: 100.00%
-      Test  Loss: 0.3117 | Test Acc: 91.35%
-      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_SGD.pth.tar]
-      0.311735481931828
+      Test  Loss: 0.3144 | Test Acc: 91.21%
       ```
+        - loss 0.3에서 더 못내리나??
 
 # 3. Training Log
 - ImageNet2012
