@@ -107,25 +107,7 @@
        ```
 - Jan 12 :
   - ResNet 32 추가 (n에 따라 가변적으로 ResNet 생성 가능.) 
-    - Results :
-      - optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001), early stop threshold 30
-        ```
-        [Epoch 112/5000] :
-        100%|██████████| 176/176 [00:06<00:00, 25.87it/s]
-        Train Loss: 0.0004 | Train Acc: 96.50%
-        Valid Loss: 1.4764 | Valid Acc: 72.50%
-        Test  Loss: 1.5016 | Test Acc: 72.05%
-        Early stopping after 111 epochs without improvement.
-        ```
-      - optimizer = torch.optim.Adam(model.parameters()), early stop threshold 30
-        ```
-        [Epoch 109/5000] :
-        100%|██████████| 176/176 [00:06<00:00, 25.57it/s]
-        Train Loss: 0.0000 | Train Acc: 100.00%
-        Valid Loss: 1.5166 | Valid Acc: 79.00%
-        Test  Loss: 1.5319 | Test Acc: 78.46%
-        Early stopping after 108 epochs without improvement.
-        ```
+    - Results : 재실험으로 실험내용 삭제
   - amp on/off 추가. ImageNet2012 학습하는 ResNet34일 때만 적용하도록 바꿈.
 - Jan 13 : 
   - ResNet32 for CIFAR10
@@ -140,18 +122,31 @@
   - build training logging process 
   - Model, Dataloader 둘 다 별도 py파일로 분리시킴.
   - case별 실험 및 비교위한 코드 정리 및 재정의 수행.
+- Jan 16 :
+  - [Early stop cnt 1200] Adam with Weight Decay (lamda=0.0001) and non-split
+    ```
+    optimizer = torch.optim.Adam(model.parameters())
+    [Epoch 2397/5000] :
+    100%|██████████| 196/196 [00:11<00:00, 16.98it/s]
+    Train Loss: 0.0002 | Train Acc: 98.75%
+    Test  Loss: 0.5759 | Test Acc: 87.54%
+    Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay.pth.tar]
+    ```
+  - [Early stop cnt 1200] Adam with Weight Decay (lamda=0.0001) and split ratio 95/5
+    ```
+    optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)
+    [Epoch 1778/5000] :
+    100%|██████████| 186/186 [00:19<00:00,  9.47it/s]
+    Train Loss: 0.0003 | Train Acc: 97.86%
+    Valid Loss: 0.8610 | Valid Acc: 83.04%
+    Test  Loss: 0.9266 | Test Acc: 82.60%
+    Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay_95.pth.tar]
+    ```
 ---
 # 3. Training Log
 - ImageNet2012
   - Adam default
     ```
-    [Epoch 1/5000] :
-    100%|██████████| 5005/5005 [31:36<00:00,  2.64it/s]  
-    Training time: 1896.06 seconds
-
-    Train Loss: 5.0520 | Train Acc: 10.57%
-    Valid Loss: 4.1285 | Valid Acc: 19.08%
-    --------------------------------------------------
     [Epoch 23/5000] :
     100%|██████████| 5005/5005 [32:00<00:00,  2.61it/s]  
     Training time: 1920.08 seconds
@@ -160,14 +155,3 @@
     Valid Loss: 1.9787 | Valid Acc: 56.24%
     ```
 - CIFAR10
-  - SGD
-    ```python
-    dd
-    ```
-    ```
-    dd
-    ```
-  - adam
-    ```
-    dd
-    ```
