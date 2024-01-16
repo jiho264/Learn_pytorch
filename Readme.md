@@ -169,10 +169,10 @@
       > 기존 lr 0.1로 5k epochs까지 학습시킨 것 백업해둠.
       >> MyResNet32_256_SGD_!5k_lr01
       ```
-      [Epoch 5216/50000] :
-      100%|██████████| 196/196 [00:06<00:00, 28.63it/s]
+      [Epoch 5239/50000] :
+      100%|██████████| 196/196 [00:06<00:00, 28.46it/s]
       Train Loss: 0.0000 | Train Acc: 100.00%
-      Test  Loss: 0.3116 | Test Acc: 91.34%
+      Test  Loss: 0.3112 | Test Acc: 91.41%
       ```
 # 3. Training Log
 - ImageNet2012
