@@ -144,12 +144,12 @@
     - with Weight Decay (lamda=0.0001) and split ratio 95/5
       ```
       optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)
-      [Epoch 1778/5000] :
-      100%|██████████| 186/186 [00:19<00:00,  9.47it/s]
-      Train Loss: 0.0003 | Train Acc: 97.86%
-      Valid Loss: 0.8610 | Valid Acc: 83.04%
-      Test  Loss: 0.9266 | Test Acc: 82.60%
-      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay_95.pth.tar]
+      [Epoch 3694/5000] :
+      100%|██████████| 196/196 [00:07<00:00, 27.90it/s]
+      Train Loss: 0.0000 | Train Acc: 100.00%
+      Test  Loss: 0.6184 | Test Acc: 87.33%
+      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay.pth.tar]
+      Early stopping after 0 epochs without improvement.
       ```
     - Adam 논문에서는 Learning Rate alpha가 어떻게 변화하는가? 왜 lr의 재정의가 필요없다고 했는가?
     - 왜 Adam보다 SGD가 더 학습이 잘 되었는가?
@@ -164,16 +164,28 @@
       Train Loss: 0.0001 | Train Acc: 100.00%
       Test  Loss: 0.5109 | Test Acc: 87.69%
       ```
-    - 5000 epochs~
-      > lr 0.1에서 0.01로 조정하니 바로 acc 88%대에서 90.8%대로 single epoch 만에 상승함.
-      > 기존 lr 0.1로 5k epochs까지 학습시킨 것 백업해둠.
-      >> MyResNet32_256_SGD_!5k_lr01
-      ```
-      [Epoch 5239/50000] :
-      100%|██████████| 196/196 [00:06<00:00, 28.46it/s]
-      Train Loss: 0.0000 | Train Acc: 100.00%
-      Test  Loss: 0.3112 | Test Acc: 91.41%
-      ```
+      - [1] 5000 epochs~
+        > lr 0.1에서 0.01로 조정하니 바로 acc 88%대에서 90.8%대로 single epoch 만에 상승함.
+        > 기존 lr 0.1로 5k epochs까지 학습시킨 것 백업해둠.
+        >> MyResNet32_256_SGD_!5k_lr01
+        ```
+        [Epoch 5239/50000] :
+        100%|██████████| 196/196 [00:06<00:00, 28.46it/s]
+        Train Loss: 0.0000 | Train Acc: 100.00%
+        Test  Loss: 0.3112 | Test Acc: 91.41%
+        ```
+      - [2] 적극적인 lr reduce
+        > 0~5k = 0.1
+        > 5k~ = LR scheduler의 patiance를 30으로 함.
+        ```
+        [1st reducing]
+        [Epoch 5033/50000] :
+        100%|██████████| 196/196 [00:06<00:00, 28.26it/s]
+        Train Loss: 0.0002 | Train Acc: 100.00%
+        Test  Loss: 0.6317 | Test Acc: 86.16%
+        Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_SGD.pth.tar]
+        Epoch 00033: reducing learning rate of group 0 to 1.0000e-02.
+        ```
 # 3. Training Log
 - ImageNet2012
   - Adam default
