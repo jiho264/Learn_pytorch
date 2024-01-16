@@ -156,26 +156,24 @@
   - 하나 알게된 것 : 동일 모델을 test할 때마다 loss가 소숫점 2자리대까지 바뀌는 것을 확인함. 
     > 동일 weights이어도, 컴퓨터 계산의 한계 때문에 오차 발생하는 것으로 보임
   - SGD
-    - 학습하던 것이 정체된 것으로 판단해 lr조정 시도
-      - ~5k epochs
+    - ~5000 epochs
+      > MyResNet32_256_SGD_5k
       ```
-      [Epoch 5207/5000] :
+      [Epoch 5000/50000] :
       100%|██████████| 196/196 [00:08<00:00, 21.99it/s]
-      Train Loss: 0.0000 | Train Acc: 100.00%
-      Test  Loss: 0.3144 | Test Acc: 91.21%
+      Train Loss: 0.0001 | Train Acc: 100.00%
+      Test  Loss: 0.5109 | Test Acc: 87.69%
       ```
-      - 5k
+    - 5000 epochs~
       > lr 0.1에서 0.01로 조정하니 바로 acc 88%대에서 90.8%대로 single epoch 만에 상승함.
       > 기존 lr 0.1로 5k epochs까지 학습시킨 것 백업해둠.
       >> MyResNet32_256_SGD_!5k_lr01
       ```
-      [Epoch 5207/5000] :
-      100%|██████████| 196/196 [00:08<00:00, 21.99it/s]
+      [Epoch 5216/50000] :
+      100%|██████████| 196/196 [00:06<00:00, 28.63it/s]
       Train Loss: 0.0000 | Train Acc: 100.00%
-      Test  Loss: 0.3144 | Test Acc: 91.21%
+      Test  Loss: 0.3116 | Test Acc: 91.34%
       ```
-        - loss 0.3에서 더 못내리나??
-
 # 3. Training Log
 - ImageNet2012
   - Adam default
