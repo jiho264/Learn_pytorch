@@ -53,16 +53,17 @@ class LoadDataset:
                 - ToTensor(),
         - ImageNet2012 :
             - train :
-                - ToTensor()
-                - Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True)
-                - RandomShortestSize(min_size=[256], max_size=480, interpolation=InterpolationMode.BILINEAR, antialias=True)
-                - RandomCrop(size=(224, 224), pad_if_needed=False, fill=0, padding_mode=constant)
-                - AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.IMAGENET)
+                - RandomShortestSize(min_size=range(256, 480), antialias=True),
+                - RandomCrop(size=224),
+                - AutoAugment(policy=AutoAugmentPolicy.IMAGENET),
+                - RandomHorizontalFlip(self.Randp),
+                - ToTensor(),
+                - Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True),
             - valid (center croped valid set) :
-                ToTensor(),
-                ...
-                ...
-                ...
+                - RandomShortestSize(min_size=range(256, 480), antialias=True),
+                - CenterCrop(size=368),
+                - ToTensor(),
+                - Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True),
             - test (10-croped valid set):
                 ToTensor(),
                 TenCrop()
@@ -185,14 +186,22 @@ class LoadDataset:
                     ]
                 ),
             )
-
+            """
+            각 지정된 스케일에 따라 10 crop해야하는데, 5개 scale들의 평균을 내야하니까 좀 번거로움.
+            그치만, 학습 중엔 center crop으로 eval하니, 지금 당장 필요하지는 않음.
+            """
             # self.test_data = datasets.ImageFolder(
             #     root=self.ImageNetRoot + "val",
             #     transform=Compose(
             #         [
+            #             RandomShortestSize(
+            #                 min_size=range[224, 256, 384, 480, 640], antialias=True
+            #             ),
+            #             TenCrop(size=368),
             #             ToTensor(),
-
-            #             TenCrop(size=224),
+            #             Normalize(
+            #                 mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True
+            #             ),
             #         ]
             #     ),
             # )
