@@ -122,7 +122,7 @@
   - build training logging process 
   - Model, Dataloader 둘 다 별도 py파일로 분리시킴.
   - case별 실험 및 비교위한 코드 정리 및 재정의 수행.
-- Jan 16 :
+- Jan 16 : ResNet32 in CIFAR10
   - Adam [Early stop cnt 1200] & [without lr scheduler]
     - with Weight Decay (lamda=0.0001) and non-split
       ```
@@ -175,7 +175,17 @@
       ```
   - Q1 : Adam 논문에서는 Learning Rate alpha가 어떻게 변화하는가? 왜 lr의 재정의가 필요없다고 했는가?
   - Q2 : 왜 Adam보다 SGD가 더 학습이 잘 되었는가?
+- Jan 17 : 
+  - 아차..
+    - 이틀 간 진행한 실험은 Adam과 SGD가 CIFAR10 & ResNet 구조에서 다른 성능을 낸다는 결론 이외 학습 결과는 중요하지 않음.
+    - 구현 실수로 첫 conv3x3 layer의 BN과 Relu를 빼먹었음.
+  - (commit **BUG FIX**) 수정 후 재실험 :
+    - non-split
+    - optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
+    - EarlyStopCounter = 2000, scheduler (cooldown = 50, Patiance = 1000)
+      ```
 
+      ```  
 # 3. Training Log
 - ImageNet2012
   - Adam default
