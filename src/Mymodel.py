@@ -16,15 +16,12 @@ class Block(nn.Module):
         super().__init__()
         self.device = device
         self.Downsample_option = Downsample_option
-        self.relu = nn.ReLU(inplace=False)
 
         self.conv1 = nn.Conv2d(inputs, outputs, kernel_size=3, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(outputs, eps=1e-05, momentum=0.1)
-        nn.init.kaiming_normal_(self.conv1.weight, mode="fan_out", nonlinearity="relu")
-
+        self.relu = nn.ReLU(inplace=True)
         self.conv2 = nn.Conv2d(outputs, outputs, kernel_size=3, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(outputs, eps=1e-05, momentum=0.1)
-        nn.init.kaiming_normal_(self.conv2.weight, mode="fan_out", nonlinearity="relu")
 
         if self.Downsample_option == None:
             pass
@@ -39,16 +36,9 @@ class Block(nn.Module):
                 inputs, outputs, kernel_size=1, stride=2, bias=False
             )
             # 여기 BN빼니까 완전히 망가져버림. acc 10% 찍힘.
-            nn.init.kaiming_normal_(
-                self.conv_down.weight, mode="fan_out", nonlinearity="relu"
-            )
-            self.bn_down = nn.BatchNorm2d(
-                outputs,
-                eps=1e-05,
-                momentum=0.1,
-                affine=True,
-                track_running_stats=True,
-            )
+            # doc보고 상위 클래스에서 모든 BN 재정의하는 것으로 수정. Jan 17, 2024
+            # nn.init.kaiming_normal_(self.conv_down.weight, mode="fan_out", nonlinearity="relu")
+            self.bn_down = nn.BatchNorm2d(outputs, eps=1e-05, momentum=0.1)
 
     def forward(self, x):
         # print("x1(identity) :", x.shape)
@@ -91,7 +81,7 @@ class MyResNet34(nn.Module):
             bias=False,
         )
         self.bn1 = nn.BatchNorm2d(64, eps=1e-05, momentum=0.1)
-        self.relu = nn.ReLU(inplace=False)
+        self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.conv64blocks = nn.Sequential(
             self.BlockClass(64, 64), self.BlockClass(64, 64), self.BlockClass(64, 64)
@@ -119,18 +109,24 @@ class MyResNet34(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc1 = nn.Linear(in_features=512, out_features=self.num_classes, bias=True)
 
-        nn.init.kaiming_normal_(self.conv1.weight, mode="fan_out", nonlinearity="relu")
-        nn.init.kaiming_normal_(self.fc1.weight, mode="fan_out", nonlinearity="relu")
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
 
     def forward(self, x):
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
         x = self.maxpool(x)
+
         x = self.conv64blocks(x)
         x = self.conv128blocks(x)
         x = self.conv256blocks(x)
         x = self.conv512blocks(x)
+
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc1(x)
@@ -164,10 +160,14 @@ class MyResNet_CIFAR(nn.Module):
         -------------------------------------
         """
 
-        self.conv32blocks = nn.Sequential(
+        self.single_conv32block = nn.Sequential(
             nn.Conv2d(
                 in_channels=3, out_channels=16, kernel_size=3, padding=1, bias=False
             ),
+            nn.BatchNorm2d(16, eps=1e-05, momentum=0.1),
+            nn.ReLU(inplace=True),
+        )
+        self.conv32blocks = nn.Sequential(
             self.BlockClass(16, 16),
         )
         self.conv16blocks = nn.Sequential(
@@ -184,9 +184,16 @@ class MyResNet_CIFAR(nn.Module):
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc1 = nn.Linear(in_features=(64), out_features=self.num_classes, bias=True)
-        nn.init.kaiming_normal_(self.fc1.weight, mode="fan_out", nonlinearity="relu")
+
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
 
     def forward(self, x):
+        x = self.single_conv32block(x)
         x = self.conv32blocks(x)
         x = self.conv16blocks(x)
         x = self.conv8blocks(x)
