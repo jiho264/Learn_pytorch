@@ -106,12 +106,12 @@
     - 구현 실수로 첫 conv3x3 layer의 BN과 Relu를 빼먹었음.
     - Dataloader에서 training set 전처리도 오류있었음.
     - 이하 (commit **BUG FIX**) 수정 후 재실험 :
-  - **MyResNet32_CIFAR_128_SGD** -ing..
+  - **MyResNet32_CIFAR_128_SGD** [End at Jan 17 23:22]
     ```py
     batch = 128
     split_ratio = 0    
     optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-    scheduler = MultiStepLR(optimizer, milestones=[164, 81], gamma=0.1)
+    scheduler = MultiStepLR(optimizer, milestones=[82, 123], gamma=0.1)
     EarlyStopCounter = 500
     train.transforms = Compose(
         ToTensor()
@@ -123,10 +123,11 @@
     test.transforms = ToTensor() 
     ```
     ```
-    [Epoch 243/1000] :
-    100%|██████████| 391/391 [00:14<00:00, 26.58it/s]
-    Train Loss: 0.0007 | Train Acc: 90.00%
-    Test  Loss: 0.4061 | Test Acc: 86.50%
+    [Epoch 239/500] :
+    100%|██████████| 391/391 [00:09<00:00, 43.04it/s]
+    Train Loss: 0.0011 | Train Acc: 87.50%
+    Test  Loss: 0.2361 | Test Acc: 92.82%
+    Early stop!! best_eval_loss = 0.230629503420448
     ``` 
   - **MyResNet32_CIFAR_128_SGD_90** -ing..
     ```py

@@ -13,6 +13,7 @@ from torchvision.transforms.v2 import (
     AutoAugment,
     Normalize,
     TenCrop,
+    CenterCrop,
     Pad,
 )
 from torchvision.transforms.autoaugment import AutoAugmentPolicy
@@ -56,9 +57,14 @@ class LoadDataset:
                 - RandomShortestSize(min_size=[256], max_size=480, interpolation=InterpolationMode.BILINEAR, antialias=True)
                 - RandomCrop(size=(224, 224), pad_if_needed=False, fill=0, padding_mode=constant)
                 - AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.IMAGENET)
-            - valid :
+            - valid (center croped valid set) :
                 ToTensor(),
                 ...
+                ...
+                ...
+            - test (10-croped valid set):
+                ToTensor(),
+                TenCrop()
                 ...
                 ...
     output :
@@ -155,6 +161,7 @@ class LoadDataset:
                         RandomShortestSize(min_size=256, max_size=480, antialias=True),
                         RandomCrop(size=224),
                         AutoAugment(policy=AutoAugmentPolicy.IMAGENET),
+                        RandomHorizontalFlip(self.Randp),
                     ]
                 ),
             )
@@ -164,11 +171,27 @@ class LoadDataset:
                 transform=Compose(
                     [
                         ToTensor(),
-                        TenCrop(size=224),
+                        Normalize(
+                            mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True
+                        ),
+                        RandomShortestSize(min_size=256, max_size=480, antialias=True),
+                        RandomCrop(size=224),
+                        # AutoAugment는 하지 않음. test할건데 뭐하러 augment?
                     ]
                 ),
             )
 
+            # self.test_data = datasets.ImageFolder(
+            #     root=self.ImageNetRoot + "val",
+            #     transform=Compose(
+            #         [
+            #             ToTensor(),
+
+            #             TenCrop(size=224),
+            #         ]
+            #     ),
+            # )
+            self.test_data = None
             # tmp = [None, None, None, None, None]
             # tmp[0], tmp[1], tmp[2], tmp[3], tmp[4] = random_split(
             #     ref_test_data, [0.2, 0.2, 0.2, 0.2, 0.2]
