@@ -138,7 +138,7 @@
     batch = 128
     split_ratio = 0.9
     optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-    scheduler = MultiStepLR(optimizer, milestones=[182, 91], gamma=0.1)
+    scheduler = MultiStepLR(optimizer, milestones=[91, 137], gamma=0.1)
     EarlyStopCounter = 500
     train.transforms = Compose(
         ToTensor()
@@ -157,7 +157,7 @@
     Valid Loss: 0.6707 | Valid Acc: 77.28%
     Test  Loss: 0.3725 | Test Acc: 87.12%
     ``` 
-    
+
   - **MyResNet32_CIFAR_256_SGD** [End at Jan 17 21:10]
     > The ResNet32's Error on CIFAR10 from Reference Paper is 7.51%.
     ```py
