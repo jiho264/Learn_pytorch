@@ -179,10 +179,11 @@
   - 아차..
     - 이틀 간 진행한 실험은 Adam과 SGD가 CIFAR10 & ResNet 구조에서 다른 성능을 낸다는 결론 이외 학습 결과는 중요하지 않음.
     - 구현 실수로 첫 conv3x3 layer의 BN과 Relu를 빼먹었음.
+    - Dataloader에서 training set 전처리도 오류있었음.
   - (commit **BUG FIX**) 수정 후 재실험 :
     - non-split
     - optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-    - EarlyStopCounter = 2000, scheduler (cooldown = 50, Patiance = 1000)
+    - EarlyStopCounter = 3000, scheduler (cooldown = 100, Patiance = 1000)
       ```
 
       ```  

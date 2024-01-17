@@ -11,6 +11,8 @@ from torchvision.transforms.v2 import (
     RandomResizedCrop,
     RandomShortestSize,
     AutoAugment,
+    Normalize,
+    Pad,
     TenCrop,
     FiveCrop,
 )
@@ -28,19 +30,6 @@ class Submean(torch.nn.Module):
         tensor = tensor - _mean[:, None, None]
 
         return tensor
-
-
-class PaddingWithRandomResizedCrop(RandomResizedCrop):
-    # Add padding to the image
-    # CIFAR 용
-    # def __call__(self, img):
-    #     img = F.pad(img, (4, 4, 4, 4), mode="constant", value=0)
-    #     return super().__call__(img)
-
-    # ImageNet 용
-    def __call__(self, pad, img):
-        img = F.pad(img, (pad, pad, pad, pad), mode="constant", value=0)
-        return super().__call__(img)
 
 
 class LoadDataset:
@@ -89,12 +78,20 @@ class LoadDataset:
             dataset_mapping = {
                 "CIFAR100": datasets.CIFAR100,
                 "CIFAR10": datasets.CIFAR10,
-                # Add more datasets if needed
             }
             cifar_default_transforms = Compose(
                 [
                     ToTensor(),
+                    # Normalize(
+                    #     mean=[0.49139968, 0.48215827, 0.44653124],
+                    #     std=[1, 1, 1],
+                    #     inplace=True,
+                    # ),
                     Submean(),
+                    AutoAugment(policy=AutoAugmentPolicy.CIFAR10),
+                    Pad(padding=4, fill=0, padding_mode="constant"),
+                    RandomResizedCrop(size=[32, 32], antialias=True),
+                    RandomHorizontalFlip(self.Randp),
                 ],
             )
             """CIFAR10, CIFAR100에서는 ref_train에 split ratio대로 적용해서 잘라냄."""
@@ -108,7 +105,7 @@ class LoadDataset:
                 root=root,
                 train=False,
                 download=False,
-                transform=cifar_default_transforms,
+                transform=ToTensor(),
             )
 
             if self.split_ratio != 0:
@@ -121,15 +118,8 @@ class LoadDataset:
                 )
                 # Apply transform at each dataset
                 self.train_data.transform = copy.deepcopy(cifar_default_transforms)
-                self.valid_data.transform = copy.deepcopy(cifar_default_transforms)
-                self.train_data.transform.transforms.append(
-                    RandomHorizontalFlip(self.Randp),
-                )
-                ####### 둘 중 하나 골라서 #################################
-                # self.train_data.transform.transforms.append(PaddingWithRandomResizedCrop([32, 32]))
-                self.train_data.transform.transforms.append(
-                    AutoAugment(policy=AutoAugmentPolicy.CIFAR10)
-                )  # Copy classes data
+                self.valid_data.transform = ToTensor()
+
                 self.train_data.classes = ref_train.classes
                 self.valid_data.classes = ref_train.classes
 
@@ -138,11 +128,10 @@ class LoadDataset:
 
             else:
                 self.train_data = ref_train
-                self.train_data.transform = copy.deepcopy(cifar_default_transforms)
-                self.train_data.transform.transforms.append(
-                    RandomHorizontalFlip(self.Randp),
-                )
+                # self.train_data.transform = copy.deepcopy(cifar_default_transforms)
+                # self.train_data.transform = ToTensor()
                 self.valid_data = None
+
             #######################################################
 
         elif self.dataset_name == "ImageNet2012":
@@ -154,34 +143,27 @@ class LoadDataset:
                     [
                         ToTensor(),
                         Submean(),
-                        # with AutoAugment
                         AutoAugment(policy=AutoAugmentPolicy.IMAGENET),
                         RandomShortestSize(min_size=256, max_size=480, antialias=True),
                         RandomResizedCrop([224, 224], antialias=True),
                     ]
                 ),
             )
-            """
-            TypeError: PaddingWithRandomResizedCrop.__call__() missing 1 required positional argument: 'img'
-
-            """
+            """[21]AlexNet의 Single Scale Evaluation을 valid set으로 사용"""
             self.valid_data = datasets.ImageFolder(
                 root=self.ImageNetRoot + "val",
                 transform=Compose(
                     [
                         ToTensor(),
-                        Submean(),
                         RandomShortestSize(min_size=368, max_size=368, antialias=True),
-                        PaddingWithRandomResizedCrop(46, [368, 368]),
+                        # 368 / 8 = 46
+                        Pad(padding=46, fill=0, padding_mode="constant"),
+                        RandomResizedCrop([368, 368], antialias=True),
                     ]
                 ),
             )
-            self.test_data = self.valid_data
-            # """
-            # 완전 학습 종료 뒤 10crop + 멀티스케일
-            # 학습중에는 single scale evaluation만 진행하기.
-            # dataloader 마저 적고, 학습돌리고 집에가기
-            # """
+            """논문에 제시된 in testing, 10crop + 멀티스케일"""
+            self.test_data = None
             # ref_test_data = datasets.ImageFolder(
             #     root=self.ImageNetRoot + "val",
             #     transform=Compose(
