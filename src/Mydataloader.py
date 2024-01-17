@@ -8,11 +8,10 @@ from torchvision.transforms.v2 import (
     ToTensor,
     RandomHorizontalFlip,
     Compose,
-    RandomResizedCrop,
+    RandomCrop,
     RandomShortestSize,
     AutoAugment,
     Normalize,
-    Pad,
     TenCrop,
     FiveCrop,
 )
@@ -82,15 +81,23 @@ class LoadDataset:
             cifar_default_transforms = Compose(
                 [
                     ToTensor(),
-                    # Normalize(
-                    #     mean=[0.49139968, 0.48215827, 0.44653124],
-                    #     std=[1, 1, 1],
-                    #     inplace=True,
-                    # ),
-                    Submean(),
+                    # exject mean and std
+                    # https://stackoverflow.com/questions/66678052/how-to-calculate-the-mean-and-the-std-of-cifar10-data
+                    # std=1로 하면 submean
+                    # https://pytorch.org/vision/main/generated/torchvision.transforms.v2.Normalize.html#torchvision.transforms.v2.Normalize
+                    Normalize(
+                        mean=[0.49139968, 0.48215827, 0.44653124],
+                        std=[1, 1, 1],
+                        inplace=True,
+                    ),
+                    # Submean(),
                     AutoAugment(policy=AutoAugmentPolicy.CIFAR10),
-                    Pad(padding=4, fill=0, padding_mode="constant"),
-                    RandomResizedCrop(size=[32, 32], antialias=True),
+                    RandomCrop(
+                        size=32,
+                        padding=4,
+                        fill=0,
+                        padding_mode="constant",
+                    ),
                     RandomHorizontalFlip(self.Randp),
                 ],
             )
@@ -163,7 +170,7 @@ class LoadDataset:
                 ),
             )
             """논문에 제시된 in testing, 10crop + 멀티스케일"""
-            self.test_data = None
+            self.test_data = self.valid_data
             # ref_test_data = datasets.ImageFolder(
             #     root=self.ImageNetRoot + "val",
             #     transform=Compose(
