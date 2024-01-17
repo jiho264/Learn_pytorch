@@ -107,82 +107,94 @@
     - Dataloader에서 training set 전처리도 오류있었음.
     - 이하 (commit **BUG FIX**) 수정 후 재실험 :
   - **MyResNet32_CIFAR_128_SGD** -ing..
-      ```py
-      batch = 128
-      split_ratio = 0    
-      optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-      scheduler = MultiStepLR(optimizer, milestones=[164, 81], gamma=0.1)
-      EarlyStopCounter = 500
-      train.transforms = Compose(
-          ToTensor()
-          Normalize(mean=[0.49139968, 0.48215827, 0.44653124], std=[1, 1, 1], inplace=True)
-          AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.CIFAR10)
-          RandomCrop(size=(32, 32), padding=[4, 4, 4, 4], pad_if_needed=False, fill=0, padding_mode=constant)
-          RandomHorizontalFlip(p=0.5)
-      ) 128
-      test.transforms = ToTensor() 128
-      ```
-      ```
-      [Epoch 243/1000] :
-      100%|██████████| 391/391 [00:14<00:00, 26.58it/s]
-      Train Loss: 0.0007 | Train Acc: 90.00%
-      Test  Loss: 0.4061 | Test Acc: 86.50%
-      ``` 
+    ```py
+    batch = 128
+    split_ratio = 0    
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
+    scheduler = MultiStepLR(optimizer, milestones=[164, 81], gamma=0.1)
+    EarlyStopCounter = 500
+    train.transforms = Compose(
+        ToTensor()
+        Normalize(mean=[0.49139968, 0.48215827, 0.44653124], std=[1, 1, 1], inplace=True)
+        AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.CIFAR10)
+        RandomCrop(size=(32, 32), padding=[4, 4, 4, 4], pad_if_needed=False, fill=0, padding_mode=constant)
+        RandomHorizontalFlip(p=0.5)
+    ) 
+    test.transforms = ToTensor() 
+    ```
+    ```
+    [Epoch 243/1000] :
+    100%|██████████| 391/391 [00:14<00:00, 26.58it/s]
+    Train Loss: 0.0007 | Train Acc: 90.00%
+    Test  Loss: 0.4061 | Test Acc: 86.50%
+    ``` 
   - **MyResNet32_CIFAR_128_SGD_90** -ing..
-      ```py
-      batch = 128
-      split_ratio = 0.9
-      optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-      scheduler = MultiStepLR(optimizer, milestones=[182, 91], gamma=0.1)
-      EarlyStopCounter = 500
-      train.transforms = Compose(
-          ToTensor()
-          Normalize(mean=[0.49139968, 0.48215827, 0.44653124], std=[1, 1, 1], inplace=True)
-          AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.CIFAR10)
-          RandomCrop(size=(32, 32), padding=[4, 4, 4, 4], pad_if_needed=False, fill=0, padding_mode=constant)
-          RandomHorizontalFlip(p=0.5)
-      ) 128
-      valid.transforms = ToTensor() 128
-      test.transforms = ToTensor() 128
-      ```
-      ```
-      [Epoch 282/1000] :
-      100%|██████████| 352/352 [00:34<00:00, 10.07it/s]
-      Train Loss: 0.0015 | Train Acc: 79.17%
-      Valid Loss: 0.6707 | Valid Acc: 77.28%
-      Test  Loss: 0.3725 | Test Acc: 87.12%
-      ``` 
+    ```py
+    batch = 128
+    split_ratio = 0.9
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
+    scheduler = MultiStepLR(optimizer, milestones=[182, 91], gamma=0.1)
+    EarlyStopCounter = 500
+    train.transforms = Compose(
+        ToTensor()
+        Normalize(mean=[0.49139968, 0.48215827, 0.44653124], std=[1, 1, 1], inplace=True)
+        AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.CIFAR10)
+        RandomCrop(size=(32, 32), padding=[4, 4, 4, 4], pad_if_needed=False, fill=0, padding_mode=constant)
+        RandomHorizontalFlip(p=0.5)
+    ) 
+    valid.transforms = ToTensor() 
+    test.transforms = ToTensor() 
+    ```
+    ```
+    [Epoch 282/1000] :
+    100%|██████████| 352/352 [00:34<00:00, 10.07it/s]
+    Train Loss: 0.0015 | Train Acc: 79.17%
+    Valid Loss: 0.6707 | Valid Acc: 77.28%
+    Test  Loss: 0.3725 | Test Acc: 87.12%
+    ``` 
   - **MyResNet32_CIFAR_256_SGD** -ing..
-      ```py
-      batch = 256
-      split_ratio = 0    
-      optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-      scheduler = ReduceLROnPlateau(patiance=100, factor=0.1, cooldown=100)
-      EarlyStopCounter = 500
-      train.transforms = Compose(
-          ToTensor()
-          Normalize(mean=[0.49139968, 0.48215827, 0.44653124], std=[1, 1, 1], inplace=True)
-          AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.CIFAR10)
-          RandomCrop(size=(32, 32), padding=[4, 4, 4, 4], pad_if_needed=False, fill=0, padding_mode=constant)
-          RandomHorizontalFlip(p=0.5)
-      ) 256
-      test.transforms = ToTensor() 256
-      ``` 
-      ``` 
-      [Epoch 547/1000] :
-      100%|██████████| 196/196 [00:10<00:00, 18.71it/s]
-      Train Loss: 0.0004 | Train Acc: 97.50%
-      Test  Loss: 0.2281 | Test Acc: 93.52%
-      ```  
+    > The ResNet32's Error on CIFAR10 from Reference Paper is 7.51%.
+    ```py
+    batch = 256
+    split_ratio = 0    
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
+    scheduler = ReduceLROnPlateau(patiance=100, factor=0.1, cooldown=100)
+    EarlyStopCounter = 500
+    train.transforms = Compose(
+        ToTensor()
+        Normalize(mean=[0.49139968, 0.48215827, 0.44653124], std=[1, 1, 1], inplace=True)
+        AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.CIFAR10)
+        RandomCrop(size=(32, 32), padding=[4, 4, 4, 4], pad_if_needed=False, fill=0, padding_mode=constant)
+        RandomHorizontalFlip(p=0.5)
+    ) 
+    test.transforms = ToTensor() 
+    ``` 
+    ``` 
+    [Epoch 850/1000] :
+    100%|██████████| 196/196 [00:09<00:00, 20.04it/s]
+    Train Loss: 0.0007 | Train Acc: 96.25%
+    Test  Loss: 0.2224 | Test Acc: 93.72%
+    Early stop!! best_eval_loss = 0.208574132155627
+    ```  
+    > test_loss: 0.20969283301383257
+    > test_acc: 93.30%
+    > test_error: 6.70%
+  - **MyResNet34_ImageNet_256_SGD** - not yet
+    ```py
+    batch = 256
+    split_ratio = 0    
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
+    scheduler = ReduceLROnPlateau(patiance=5, factor=0.1, cooldown=5)
+    EarlyStopCounter = 25 # MyResNet32_CIFAR_256_SGD의 결과가 좋아서, 동일한 공식으로 sch, ealry 설정함.
+    train.transforms = Compose(
+
+    ) 
+    test.transforms = ToTensor() 
+    ``` 
+    ``` 
+    [Epoch ㅁㄴㅇㄹ/1000] :
+    ㅁㄴㅇㄹ
+    ```
 # 3. Training Log
 - ImageNet2012
-  - Adam default
-    ```
-    [Epoch 23/5000] :
-    100%|██████████| 5005/5005 [32:00<00:00,  2.61it/s]  
-    Training time: 1920.08 seconds
-
-    Train Loss: 1.5245 | Train Acc: 64.11%
-    Valid Loss: 1.9787 | Valid Acc: 56.24%
-    ```
 - CIFAR10

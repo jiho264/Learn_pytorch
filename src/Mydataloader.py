@@ -162,30 +162,16 @@ class LoadDataset:
                     ]
                 ),
             )
-            self.valid_data = None
-            self.test_data = None
-            # """[21]AlexNet의 Single Scale Evaluation을 valid set으로 사용"""
-            # self.valid_data = datasets.ImageFolder(
-            #     root=self.ImageNetRoot + "val",
-            #     transform=Compose(
-            #         [
-            #             ToTensor(),
-            #             RandomShortestSize(min_size=368, max_size=368, antialias=True),
-            #             # 368 / 8 = 46
-            #             RandomCrop(size=368, padding=46, fill=0),
-            #         ]
-            #     ),
-            # )
-            # """논문에 제시된 in testing, 10crop + 멀티스케일"""
-            # self.test_data = self.valid_data
-            # ref_test_data = datasets.ImageFolder(
-            #     root=self.ImageNetRoot + "val",
-            #     transform=Compose(
-            #         [
-            #             ToTensor(),
-            #         ]
-            #     ),
-            # )
+            """논문에 제시된 in testing, 10crop + 멀티스케일"""
+            self.valid_data = datasets.ImageFolder(
+                root=self.ImageNetRoot + "val",
+                transform=Compose(
+                    [
+                        ToTensor(),
+                        TenCrop(size=224),
+                    ]
+                ),
+            )
 
             # tmp = [None, None, None, None, None]
             # tmp[0], tmp[1], tmp[2], tmp[3], tmp[4] = random_split(
