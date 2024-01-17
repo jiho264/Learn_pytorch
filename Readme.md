@@ -133,7 +133,7 @@
     > test_acc: 92.63%
     > test_error: 7.37%
 
-  - **MyResNet32_CIFAR_128_SGD_90** -ing..
+  - **MyResNet32_CIFAR_128_SGD_90** [End at Jan 18 00:13]
     ```py
     batch = 128
     split_ratio = 0.9
@@ -151,12 +151,17 @@
     test.transforms = ToTensor() 
     ```
     ```
-    [Epoch 282/1000] :
-    100%|██████████| 352/352 [00:34<00:00, 10.07it/s]
-    Train Loss: 0.0015 | Train Acc: 79.17%
-    Valid Loss: 0.6707 | Valid Acc: 77.28%
-    Test  Loss: 0.3725 | Test Acc: 87.12%
+    약 96.5k iter이라서 종료
+    [Epoch 269/500] :
+    100%|██████████| 352/352 [00:15<00:00, 23.21it/s]
+    Train Loss: 0.0006 | Train Acc: 95.83%
+    Valid Loss: 0.2015 | Valid Acc: 93.06%
+    Test  Loss: 0.3244 | Test Acc: 89.70%
+    updated best eval loss : 0.2015449077123776
     ``` 
+    > test_loss: 0.32554739619357675
+    > test_acc: 89.70%
+    > test_error: 10.30%
 
   - **MyResNet32_CIFAR_256_SGD** [End at Jan 17 21:10]
     > The ResNet32's Error on CIFAR10 from Reference Paper is 7.51%.
@@ -185,6 +190,7 @@
     > test_loss: 0.20969283301383257
     > test_acc: 93.30%
     > test_error: 6.70%
+    
   - **MyResNet34_ImageNet_256_SGD** - not yet
     ```py
     batch = 256
