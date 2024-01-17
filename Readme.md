@@ -64,36 +64,11 @@
     - https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html
 
 - Jan 11
+  - >재실험으로 실험내용 삭제
   - Origin과의 비교 결과
     - 같은 학습 method에서는 거의 동일한 Convergence 보임.
     - 500 epochs에서도 valid loss 줄지 않으면, 그간 최소 loss였던 weight를 저장함. -> 579에서 종료면 실제 학습은 79에서 제일 잘 나왔던 것.
       > 학습 방법의 차이에서 80%대 달성이 좌우되는 듯 하다.
-    - MyResNet34
-      ```
-      [Epoch 580/5000] :
-      Training time: 15.96 seconds
-      Train Loss: 0.0000 | Train Acc: 100.00%
-      Valid Loss: 2.5979 | Valid Acc: 75.64%
-      Test  Loss: 2.5924 | Test Acc: 75.46%
-      Early stopping after 579 epochs without improvement.
-      ```
-    - Origin ResNet34 (pretrained = False)
-      ```
-      [Epoch 506/5000] :
-      Training time: 11.10 seconds
-      Train Loss: 0.0040 | Train Acc: 99.89%
-      Valid Loss: 2.4615 | Valid Acc: 74.32%
-      Test  Loss: 2.3427 | Test Acc: 75.67%
-      Early stopping after 505 epochs without improvement.
-      ```
-    - Origin ResNet34 (pretrained = True)
-      ```
-      [Epoch 134/5000] :
-      Training time: 11.12 seconds
-      Train Loss: 0.0043 | Train Acc: 99.86%
-      Valid Loss: 1.1660 | Valid Acc: 81.80%
-      Test  Loss: 1.2111 | Test Acc: 81.40%
-      ```
   - ImageNet2012 학습 :
     - AMP를 train, valid, test 중 train의 forward pass에만 적용
       - https://tutorials.pytorch.kr/recipes/recipes/amp_recipe.html
@@ -105,87 +80,99 @@
       Train Loss: 1.5245 | Train Acc: 64.11%
       Valid Loss: 1.9787 | Valid Acc: 56.24%
        ```
-- Jan 12 :
+- Jan 12 : 
+  - >재실험으로 실험내용 삭제
   - ResNet 32 추가 (n에 따라 가변적으로 ResNet 생성 가능.) 
-    - Results : 재실험으로 실험내용 삭제
   - amp on/off 추가. ImageNet2012 학습하는 ResNet34일 때만 적용하도록 바꿈.
-- Jan 13 : 
-  - ResNet32 for CIFAR10
-    - Setup 1
-      - train만 전처리 하고, valid, test에 ToTensor()만 적용시 507 epoch에서 stop되었고 acc 각각 100%, 80%, 58%로 나타남.
-      - on CIFAR10에서 testing시, origin image 32x32x3 썼다고했는데, submean을 하지 않고서는 도저히 이렇게 나오지 않는다. 
-      - Submean하는게 맞는 것 같다.
-    - Setup 2
-      - valid, test 모두 Submean 적용
-      - 509 epochs test acc 75.42%
+- Jan 13 : ResNet32 for CIFAR10
+  - >재실험으로 실험내용 삭제
+    - ~~train만 전처리 하고, valid, test에 ToTensor()만 적용시 507 epoch에서 stop되었고 acc 각각 100%, 80%, 58%로 나타남.~~
+    - ~~on CIFAR10에서 testing시, origin image 32x32x3 썼다고했는데, submean을 하지 않고서는 도저히 이렇게 나오지 않는다.~~
+    - ~~Submean하는게 맞는 것 같다.~~
+    - [Jan 17] CIFAR10에서 Submean을 valid, test set에 적용하지 않아도 학습이 잘 되었음. 
 - Jan 15 : 
   - build training logging process 
   - Model, Dataloader 둘 다 별도 py파일로 분리시킴.
   - case별 실험 및 비교위한 코드 정리 및 재정의 수행.
 - Jan 16 : ResNet32 in CIFAR10
-  - Adam [Early stop cnt 1200] & [without lr scheduler]
-    - with Weight Decay (lamda=0.0001) and non-split
-      ```
-      optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)
-      [Epoch 3694/5000] :
-      100%|██████████| 196/196 [00:07<00:00, 27.90it/s]
-      Train Loss: 0.0000 | Train Acc: 100.00%
-      Test  Loss: 0.6184 | Test Acc: 87.33%
-      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay.pth.tar]
-      ```
-    - with Weight Decay (lamda=0.0001) and split ratio 95/5
-      ```
-      optimizer = torch.optim.Adam(model.parameters(), weight_decay=1e-4)
-      [Epoch 1778/5000] :
-      100%|██████████| 186/186 [00:19<00:00,  9.47it/s]
-      Train Loss: 0.0003 | Train Acc: 97.86%
-      Valid Loss: 0.8610 | Valid Acc: 83.04%
-      Test  Loss: 0.9266 | Test Acc: 82.60%
-      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_Adam_decay_95.pth.tar]
-      ```
+  - >재실험으로 실험내용 삭제
   - 하나 알게된 것 : 동일 모델을 test할 때마다 loss가 소숫점 2자리대까지 바뀌는 것을 확인함. 
-    > 동일 weights이어도, 컴퓨터 계산의 한계 때문에 오차 발생하는 것으로 보임
-  - SGD
-    - [1] ~5000 epochs
-      > MyResNet32_256_SGD_5k
-      ```
-      [Epoch 5000/50000] :
-      100%|██████████| 196/196 [00:08<00:00, 21.99it/s]
-      Train Loss: 0.0001 | Train Acc: 100.00%
-      Test  Loss: 0.5109 | Test Acc: 87.69%
-      ```
-    - [2] 5000 epochs 이후 적극적인 lr reduce
-      > 0~5k = 0.1
-      > 5k~ = LR scheduler의 patiance를 30으로 함.
-      ```
-      [1st reducing]
-      [Epoch 5033/50000] :
-      100%|██████████| 196/196 [00:06<00:00, 28.26it/s]
-      Train Loss: 0.0002 | Train Acc: 100.00%
-      Test  Loss: 0.6317 | Test Acc: 86.16%
-      Saved PyTorch Model State to [logs/CIFAR10/MyResNet32_256_SGD.pth.tar]
-      Epoch 00033: reducing learning rate of group 0 to 1.0000e-02.
-      ```
-      ```
-      lr = 0.01
-      [Epoch 5671/50000] :
-      100%|██████████| 196/196 [00:03<00:00, 50.76it/s]
-      Train Loss: 0.0000 | Train Acc: 100.00%
-      Test  Loss: 0.3135 | Test Acc: 91.14%
-      ```
+    - 동일 weights이어도, 컴퓨터 계산의 한계 때문에 오차 발생하는 것으로 보임  
   - Q1 : Adam 논문에서는 Learning Rate alpha가 어떻게 변화하는가? 왜 lr의 재정의가 필요없다고 했는가?
   - Q2 : 왜 Adam보다 SGD가 더 학습이 잘 되었는가?
 - Jan 17 : 
   - 아차..
-    - 이틀 간 진행한 실험은 Adam과 SGD가 CIFAR10 & ResNet 구조에서 다른 성능을 낸다는 결론 이외 학습 결과는 중요하지 않음.
+    - **이틀 간 진행한 실험은 Adam과 SGD가 CIFAR10 & ResNet 구조에서 다른 성능을 낸다는 결론 이외 학습 결과는 중요하지 않음.**
     - 구현 실수로 첫 conv3x3 layer의 BN과 Relu를 빼먹었음.
     - Dataloader에서 training set 전처리도 오류있었음.
-  - (commit **BUG FIX**) 수정 후 재실험 :
-    - non-split
-    - optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-    - EarlyStopCounter = 3000, scheduler (cooldown = 100, Patiance = 1000)
+    - 이하 (commit **BUG FIX**) 수정 후 재실험 :
+  - **MyResNet32_CIFAR_128_SGD** -ing..
+      ```py
+      batch = 128
+      split_ratio = 0    
+      optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
+      scheduler = MultiStepLR(optimizer, milestones=[164, 81], gamma=0.1)
+      EarlyStopCounter = 500
+      train.transforms = Compose(
+          ToTensor()
+          Normalize(mean=[0.49139968, 0.48215827, 0.44653124], std=[1, 1, 1], inplace=True)
+          AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.CIFAR10)
+          RandomCrop(size=(32, 32), padding=[4, 4, 4, 4], pad_if_needed=False, fill=0, padding_mode=constant)
+          RandomHorizontalFlip(p=0.5)
+      ) 128
+      test.transforms = ToTensor() 128
       ```
-
+      ```
+      [Epoch 243/1000] :
+      100%|██████████| 391/391 [00:14<00:00, 26.58it/s]
+      Train Loss: 0.0007 | Train Acc: 90.00%
+      Test  Loss: 0.4061 | Test Acc: 86.50%
+      ``` 
+  - **MyResNet32_CIFAR_128_SGD_90** -ing..
+      ```py
+      batch = 128
+      split_ratio = 0.9
+      optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
+      scheduler = MultiStepLR(optimizer, milestones=[182, 91], gamma=0.1)
+      EarlyStopCounter = 500
+      train.transforms = Compose(
+          ToTensor()
+          Normalize(mean=[0.49139968, 0.48215827, 0.44653124], std=[1, 1, 1], inplace=True)
+          AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.CIFAR10)
+          RandomCrop(size=(32, 32), padding=[4, 4, 4, 4], pad_if_needed=False, fill=0, padding_mode=constant)
+          RandomHorizontalFlip(p=0.5)
+      ) 128
+      valid.transforms = ToTensor() 128
+      test.transforms = ToTensor() 128
+      ```
+      ```
+      [Epoch 282/1000] :
+      100%|██████████| 352/352 [00:34<00:00, 10.07it/s]
+      Train Loss: 0.0015 | Train Acc: 79.17%
+      Valid Loss: 0.6707 | Valid Acc: 77.28%
+      Test  Loss: 0.3725 | Test Acc: 87.12%
+      ``` 
+  - **MyResNet32_CIFAR_256_SGD** -ing..
+      ```py
+      batch = 256
+      split_ratio = 0    
+      optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
+      scheduler = ReduceLROnPlateau(patiance=100, factor=0.1, cooldown=100)
+      EarlyStopCounter = 500
+      train.transforms = Compose(
+          ToTensor()
+          Normalize(mean=[0.49139968, 0.48215827, 0.44653124], std=[1, 1, 1], inplace=True)
+          AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.CIFAR10)
+          RandomCrop(size=(32, 32), padding=[4, 4, 4, 4], pad_if_needed=False, fill=0, padding_mode=constant)
+          RandomHorizontalFlip(p=0.5)
+      ) 256
+      test.transforms = ToTensor() 256
+      ``` 
+      ``` 
+      [Epoch 547/1000] :
+      100%|██████████| 196/196 [00:10<00:00, 18.71it/s]
+      Train Loss: 0.0004 | Train Acc: 97.50%
+      Test  Loss: 0.2281 | Test Acc: 93.52%
       ```  
 # 3. Training Log
 - ImageNet2012
