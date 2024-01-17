@@ -129,6 +129,10 @@
     Test  Loss: 0.2361 | Test Acc: 92.82%
     Early stop!! best_eval_loss = 0.230629503420448
     ``` 
+    > test_loss: 0.2305202476232301
+    > test_acc: 92.63%
+    > test_error: 7.37%
+
   - **MyResNet32_CIFAR_128_SGD_90** -ing..
     ```py
     batch = 128
@@ -153,6 +157,7 @@
     Valid Loss: 0.6707 | Valid Acc: 77.28%
     Test  Loss: 0.3725 | Test Acc: 87.12%
     ``` 
+    
   - **MyResNet32_CIFAR_256_SGD** [End at Jan 17 21:10]
     > The ResNet32's Error on CIFAR10 from Reference Paper is 7.51%.
     ```py
