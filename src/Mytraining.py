@@ -96,11 +96,12 @@ class DoTraining:
         if valid_dataloader == None and test_dataloader == None:
             raise ValueError("No valid/test dataset")
 
-        self.logs["lr_log"].append(self.optimizer.param_groups[0]["lr"])
-
         train_loss, train_acc = self.Forward_train(train_dataloader)
         self.logs["train_loss"].append(train_loss)
         self.logs["train_acc"].append(train_acc)
+
+        self.logs["lr_log"].append(self.optimizer.param_groups[0]["lr"])
+
         print(f"Train Loss: {train_loss:.4f} | Train Acc: {train_acc*100:.2f}%")
 
         if valid_dataloader != None:

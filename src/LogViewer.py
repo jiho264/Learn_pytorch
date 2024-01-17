@@ -82,3 +82,8 @@ class LogViewer:
                 print(
                     f"{i+1} epoch: train_loss={self.logs['train_loss'][i]:.4f}, train_acc={self.logs['train_acc'][i]:.4f}, valid_loss={self.logs['valid_loss'][i]:.4f}, valid_acc={self.logs['valid_acc'][i]:.4f}, lr={self.logs['lr_log'][i]:.4f}"
                 )
+        else:
+            for i in range(len(self.logs["train_loss"])):
+                print(
+                    f"{i+1} epoch: train_loss={self.logs['train_loss'][i]:.4f}, train_acc={self.logs['train_acc'][i]:.4f}, test_loss={self.logs['test_loss'][i]:.4f}, test_acc={self.logs['test_acc'][i]:.4f}, valid_loss={self.logs['valid_loss'][i]:.4f}, valid_acc={self.logs['valid_acc'][i]:.4f}, lr={self.logs['lr_log'][i]:.4f}"
+                )
