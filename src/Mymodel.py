@@ -26,10 +26,14 @@ class Block(nn.Module):
         self.bn2 = nn.BatchNorm2d(outputs, eps=1e-05, momentum=0.1)
         nn.init.kaiming_normal_(self.conv2.weight, mode="fan_out", nonlinearity="relu")
 
-        if self.Downsample_option == "A":
+        if self.Downsample_option == None:
+            pass
+        elif self.Downsample_option == "A":
             self.conv1.stride = 2
-
-        if self.Downsample_option == "C":
+        elif self.Downsample_option == "B":
+            """미 구현"""
+            pass
+        elif self.Downsample_option == "C":
             self.conv1.stride = 2
             self.conv_down = nn.Conv2d(
                 inputs, outputs, kernel_size=1, stride=2, bias=False
@@ -73,10 +77,11 @@ class Block(nn.Module):
 
 
 class MyResNet34(nn.Module):
-    def __init__(self, num_classes, BlockClass=Block):
+    def __init__(self, num_classes, Downsample_option="A"):
         super().__init__()
         self.num_classes = num_classes
-        self.BlockClass = BlockClass
+        self.BlockClass = Block
+        self.Downsample_option = Downsample_option
         self.conv1 = nn.Conv2d(
             in_channels=3,
             out_channels=64,
@@ -92,13 +97,13 @@ class MyResNet34(nn.Module):
             self.BlockClass(64, 64), self.BlockClass(64, 64), self.BlockClass(64, 64)
         )
         self.conv128blocks = nn.Sequential(
-            self.BlockClass(64, 128, Downsample_option="C"),
+            self.BlockClass(64, 128, Downsample_option=self.Downsample_option),
             self.BlockClass(128, 128),
             self.BlockClass(128, 128),
             self.BlockClass(128, 128),
         )
         self.conv256blocks = nn.Sequential(
-            self.BlockClass(128, 256, Downsample_option="C"),
+            self.BlockClass(128, 256, Downsample_option=self.Downsample_option),
             self.BlockClass(256, 256),
             self.BlockClass(256, 256),
             self.BlockClass(256, 256),
@@ -106,7 +111,7 @@ class MyResNet34(nn.Module):
             self.BlockClass(256, 256),
         )
         self.conv512blocks = nn.Sequential(
-            self.BlockClass(256, 512, Downsample_option="C"),
+            self.BlockClass(256, 512, Downsample_option=self.Downsample_option),
             self.BlockClass(512, 512),
             self.BlockClass(512, 512),
         )
@@ -134,11 +139,12 @@ class MyResNet34(nn.Module):
 
 
 class MyResNet_CIFAR(nn.Module):
-    def __init__(self, num_classes, num_layer_factor, BlockClass=Block):
+    def __init__(self, num_classes, num_layer_factor, Downsample_option="A"):
         super().__init__()
         self.num_layer_factor = num_layer_factor
         self.num_classes = num_classes
-        self.BlockClass = BlockClass
+        self.BlockClass = Block
+        self.Downsample_option = Downsample_option
 
         """
         - The subsampling is preformed by convolutions with a stride 2.
@@ -165,10 +171,10 @@ class MyResNet_CIFAR(nn.Module):
             self.BlockClass(16, 16),
         )
         self.conv16blocks = nn.Sequential(
-            self.BlockClass(16, 32, Downsample_option="A"),
+            self.BlockClass(16, 32, Downsample_option=self.Downsample_option),
         )
         self.conv8blocks = nn.Sequential(
-            self.BlockClass(32, 64, Downsample_option="A"),
+            self.BlockClass(32, 64, Downsample_option=self.Downsample_option),
         )
 
         for i in range(1, self.num_layer_factor):
