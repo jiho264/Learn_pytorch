@@ -15,6 +15,7 @@ from torchvision.transforms.v2 import (
     TenCrop,
     CenterCrop,
     Pad,
+    Resize,
 )
 from torchvision.transforms.autoaugment import AutoAugmentPolicy
 
@@ -86,6 +87,14 @@ class LoadDataset:
             }
             cifar_default_transforms = Compose(
                 [
+                    AutoAugment(policy=AutoAugmentPolicy.CIFAR10),
+                    RandomCrop(
+                        size=32,
+                        padding=4,
+                        fill=0,
+                        padding_mode="constant",
+                    ),
+                    RandomHorizontalFlip(self.Randp),
                     ToTensor(),
                     # exject mean and std
                     # https://stackoverflow.com/questions/66678052/how-to-calculate-the-mean-and-the-std-of-cifar10-data
@@ -97,14 +106,6 @@ class LoadDataset:
                         inplace=True,
                     ),
                     # Submean(),
-                    AutoAugment(policy=AutoAugmentPolicy.CIFAR10),
-                    RandomCrop(
-                        size=32,
-                        padding=4,
-                        fill=0,
-                        padding_mode="constant",
-                    ),
-                    RandomHorizontalFlip(self.Randp),
                 ],
             )
             """CIFAR10, CIFAR100에서는 ref_train에 split ratio대로 적용해서 잘라냄."""
@@ -154,14 +155,16 @@ class LoadDataset:
                 root=self.ImageNetRoot + "train",
                 transform=Compose(
                     [
+                        RandomShortestSize(
+                            min_size=range(256, 480), antialias=True
+                        ),  # 만약 이거보다 작으면 적용 안 된 작은 사이즈
+                        RandomCrop(size=224),
+                        AutoAugment(policy=AutoAugmentPolicy.IMAGENET),
+                        RandomHorizontalFlip(self.Randp),
                         ToTensor(),
                         Normalize(
                             mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True
                         ),
-                        RandomShortestSize(min_size=256, max_size=480, antialias=True),
-                        RandomCrop(size=224),
-                        AutoAugment(policy=AutoAugmentPolicy.IMAGENET),
-                        RandomHorizontalFlip(self.Randp),
                     ]
                 ),
             )
@@ -170,13 +173,15 @@ class LoadDataset:
                 root=self.ImageNetRoot + "val",
                 transform=Compose(
                     [
+                        RandomShortestSize(
+                            min_size=range(256, 480), antialias=True
+                        ),  # 만약 이거보다 작으면 적용 안 된 작은 사이즈
+                        # VGG에서 single scale로 했을 때는 두 range의 median 값으로 crop함.
+                        CenterCrop(size=368),
                         ToTensor(),
                         Normalize(
                             mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True
                         ),
-                        RandomShortestSize(min_size=256, max_size=480, antialias=True),
-                        RandomCrop(size=224),
-                        # AutoAugment는 하지 않음. test할건데 뭐하러 augment?
                     ]
                 ),
             )
