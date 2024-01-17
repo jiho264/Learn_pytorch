@@ -192,10 +192,26 @@
     optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
     scheduler = ReduceLROnPlateau(patiance=5, factor=0.1, cooldown=5)
     EarlyStopCounter = 25 # MyResNet32_CIFAR_256_SGD의 결과가 좋아서, 동일한 공식으로 sch, ealry 설정함.
-    train.transforms = Compose(
-
-    ) 
-    test.transforms = ToTensor() 
+    train = Compose(
+        RandomShortestSize(min_size=range(256, 480), antialias=True),
+        RandomCrop(size=224),
+        AutoAugment(policy=AutoAugmentPolicy.IMAGENET),
+        RandomHorizontalFlip(self.Randp),
+        ToTensor(),
+        Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True),
+    )
+    # center croped valid set
+    valid = Compose(
+        RandomShortestSize(min_size=range(256, 480), antialias=True),
+        CenterCrop(size=368),
+        ToTensor(),
+        Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True),
+    )
+    # 10-croped valid set
+    test  = Compose(
+        ToTensor(),
+        TenCrop()
+    )
     ``` 
     ``` 
     [Epoch ㅁㄴㅇㄹ/1000] :
