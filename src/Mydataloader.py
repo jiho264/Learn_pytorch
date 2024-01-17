@@ -149,10 +149,12 @@ class LoadDataset:
                 transform=Compose(
                     [
                         ToTensor(),
-                        Submean(),
-                        AutoAugment(policy=AutoAugmentPolicy.IMAGENET),
+                        Normalize(
+                            mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True
+                        ),
                         RandomShortestSize(min_size=256, max_size=480, antialias=True),
-                        RandomResizedCrop([224, 224], antialias=True),
+                        RandomCrop(size=224),
+                        AutoAugment(policy=AutoAugmentPolicy.IMAGENET),
                     ]
                 ),
             )
@@ -164,22 +166,21 @@ class LoadDataset:
                         ToTensor(),
                         RandomShortestSize(min_size=368, max_size=368, antialias=True),
                         # 368 / 8 = 46
-                        Pad(padding=46, fill=0, padding_mode="constant"),
-                        RandomResizedCrop([368, 368], antialias=True),
+                        RandomCrop(size=368, padding=46, fill=0),
                     ]
                 ),
             )
             """논문에 제시된 in testing, 10crop + 멀티스케일"""
             self.test_data = self.valid_data
-            # ref_test_data = datasets.ImageFolder(
-            #     root=self.ImageNetRoot + "val",
-            #     transform=Compose(
-            #         [
-            #             ToTensor(),
-            #             Submean(),
-            #         ]
-            #     ),
-            # )
+            ref_test_data = datasets.ImageFolder(
+                root=self.ImageNetRoot + "val",
+                transform=Compose(
+                    [
+                        ToTensor(),
+                        Submean(),
+                    ]
+                ),
+            )
 
             # _test_data = [None, None, None, None, None]
 
