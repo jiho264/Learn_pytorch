@@ -126,7 +126,15 @@ class DoTraining:
             eval_loss = test_loss
 
         # Learning rate scheduler
-        if self.scheduler != None:
+        if self.scheduler.__class__ == torch.optim.lr_scheduler.ReduceLROnPlateau:
             self.scheduler.step(eval_loss)
+        elif self.scheduler.__class__ == torch.optim.lr_scheduler.MultiStepLR:
+            _tmp_lr = self.optimizer.param_groups[0]["lr"]
+            self.scheduler.step()
+            if _tmp_lr != self.optimizer.param_groups[0]["lr"]:
+                print(
+                    "Learning Rate has changed : Now is",
+                    self.optimizer.param_groups[0]["lr"],
+                )
 
         return eval_loss
