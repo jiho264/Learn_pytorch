@@ -34,37 +34,41 @@ class Submean(torch.nn.Module):
 class LoadDataset:
     """
     input :
-        - root : "data"
+        - root : datasets folder path
         - seceted_data :
             - "CIFAR10" or "CIFAR100" : Load ~ from torchvision.datasets
             - "ImageNet2012" : Load ~ from Local
     pre-processing:
         - CIFAR10, CIFAR100 :
-            - split train/valid with 9:1 ratio
+            - Option : split train/valid with (split_ratio):(1-split_ratio) ratio (default split_ratio = 0)
             - train :
-                ToTensor(),
-                Random Horizontal Flip (p = 0.5),
-                4 pixel zero padding and crop to (32,32,3),
-                Submean(),
+                - ToTensor(),
+                - Normalize(mean=[0.49139968, 0.48215827, 0.44653124], std=[1, 1, 1],inplace=True,),
+                - AutoAugment(policy=AutoAugmentPolicy.CIFAR10),
+                - RandomCrop(size=32, padding=4,fill=0,padding_mode="constant",),
+                - RandomHorizontalFlip(self.Randp),
             - valid, test :
-                ToTensor(),
-                Submean(),
+                - ToTensor(),
         - ImageNet2012 :
             - train :
-                ToTensor(),
-                RandomShortestSize(min_size=256, max_size=480, antialias=True),
-                RandomResizedCrop([224, 224], antialias=True),
-                RandomHorizontalFlip(self.Randp),
-                Submean(),
+                - ToTensor()
+                - Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True)
+                - RandomShortestSize(min_size=[256], max_size=480, interpolation=InterpolationMode.BILINEAR, antialias=True)
+                - RandomCrop(size=(224, 224), pad_if_needed=False, fill=0, padding_mode=constant)
+                - AutoAugment(interpolation=InterpolationMode.NEAREST, policy=AutoAugmentPolicy.IMAGENET)
             - valid :
                 ToTensor(),
-                RandomShortestSize(min_size=[224, 256, 384, 480, 640], antialias=True),
-                RandomResizedCrop([224, 224], antialias=True),
-                Submean(),
+                ...
+                ...
+                ...
+            - test :
+                ToTensor(),
+                ...
+                ...
     output :
         - self.train_data
-        - self.valid_data
-        - self.test_data
+        - self.valid_data (default : None)
+        - self.test_data (default : None)
         - num of classes
     """
 
