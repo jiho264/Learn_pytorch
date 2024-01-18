@@ -215,7 +215,7 @@
     )
     # 10-croped valid set
     scales = [224, 256, 384, 480, 640]
-    test  = Compose(
+    valid  = Compose(
         RandomShortestSize(min_size=scale[i], antialias=True)
         TenCrop(size=scale[i])
         ToTensor()
