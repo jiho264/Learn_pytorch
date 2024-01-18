@@ -156,9 +156,7 @@ class LoadDataset:
                 root=self.ImageNetRoot + "train",
                 transform=Compose(
                     [
-                        RandomShortestSize(
-                            min_size=range(256, 480), antialias=True
-                        ),  # 만약 이거보다 작으면 적용 안 된 작은 사이즈
+                        RandomShortestSize(min_size=range(256, 480), antialias=True),
                         RandomCrop(size=224),
                         AutoAugment(policy=AutoAugmentPolicy.IMAGENET),
                         RandomHorizontalFlip(self.Randp),
@@ -174,9 +172,7 @@ class LoadDataset:
                 root=self.ImageNetRoot + "val",
                 transform=Compose(
                     [
-                        RandomShortestSize(
-                            min_size=range(256, 480), antialias=True
-                        ),  # 만약 이거보다 작으면 적용 안 된 작은 사이즈
+                        RandomShortestSize(min_size=range(256, 480), antialias=True),
                         # VGG에서 single scale로 했을 때는 두 range의 median 값으로 crop함.
                         CenterCrop(size=368),
                         ToTensor(),

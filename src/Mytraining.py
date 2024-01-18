@@ -25,13 +25,13 @@ class DoTraining:
         self.logs = logs
         self.file_path = file_path
 
-    def Forward_train(self, dataset):
+    def Forward_train(self, dataloader):
         # Training loop @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         self.model.train()
         running_loss = 0.0
         correct = 0
         total = 0
-        for images, labels in tqdm.tqdm(dataset):
+        for images, labels in tqdm.tqdm(dataloader):
             with torch.autocast(device_type="cuda", dtype=torch.float16, enabled=True):
                 images, labels = images.to(self.device), labels.to(self.device)
                 self.optimizer.zero_grad()
@@ -47,7 +47,7 @@ class DoTraining:
         total += labels.size(0)
         correct += predicted.eq(labels).sum().item()
 
-        train_loss = running_loss / len(dataset)
+        train_loss = running_loss / len(dataloader)
         train_acc = correct / total
 
         return train_loss, train_acc
@@ -94,7 +94,7 @@ class DoTraining:
         self, train_dataloader, valid_dataloader=None, test_dataloader=None
     ):
         if valid_dataloader == None and test_dataloader == None:
-            raise ValueError("No valid/test dataset")
+            raise ValueError("No any valid/test dataloader")
 
         train_loss, train_acc = self.Forward_train(train_dataloader)
         self.logs["train_loss"].append(train_loss)
