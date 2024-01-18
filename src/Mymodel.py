@@ -28,9 +28,6 @@ class Block(nn.Module):
         elif self.Downsample_option == "A":
             self.conv1.stride = 2
         elif self.Downsample_option == "B":
-            """미 구현"""
-            pass
-        elif self.Downsample_option == "C":
             self.conv1.stride = 2
             self.conv_down = nn.Conv2d(
                 inputs, outputs, kernel_size=1, stride=2, bias=False
@@ -39,6 +36,9 @@ class Block(nn.Module):
             # doc보고 상위 클래스에서 모든 BN 재정의하는 것으로 수정. Jan 17, 2024
             # nn.init.kaiming_normal_(self.conv_down.weight, mode="fan_out", nonlinearity="relu")
             self.bn_down = nn.BatchNorm2d(outputs, eps=1e-05, momentum=0.1)
+        elif self.Downsample_option == "C":
+            """미 구현"""
+            pass
 
     def forward(self, x):
         # print("x1(identity) :", x.shape)
@@ -55,7 +55,7 @@ class Block(nn.Module):
             identity = torch.cat(
                 [identity, torch.zeros(identity.shape).to(self.device)], dim=1
             )
-        elif self.Downsample_option == "C":
+        elif self.Downsample_option == "B":
             identity = self.conv_down(identity)
             identity = self.bn_down(identity)
 
