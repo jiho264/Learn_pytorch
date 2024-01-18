@@ -191,7 +191,7 @@
     > test_acc: 93.30%
     > test_error: 6.70%
     
-  - **MyResNet34_ImageNet_256_SGD** - not yet
+  - **MyResNet34_ImageNet_256_SGD** - [doing now]
     ```py
     batch = 256
     split_ratio = 0    
@@ -214,9 +214,12 @@
         Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True),
     )
     # 10-croped valid set
+    scales = [224, 256, 384, 480, 640]
     test  = Compose(
-        ToTensor(),
-        TenCrop()
+        RandomShortestSize(min_size=scale, antialias=True)
+        TenCrop(size=scale)
+        ToTensor()
+        Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True)
     )
     ``` 
     ``` 

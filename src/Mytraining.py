@@ -31,7 +31,7 @@ class DoTraining:
         running_loss = 0.0
         correct = 0
         total = 0
-        for images, labels in tqdm.tqdm(dataloader):
+        for images, labels in tqdm.tqdm(dataloader, desc="train"):
             with torch.autocast(device_type="cuda", dtype=torch.float16, enabled=True):
                 images, labels = images.to(self.device), labels.to(self.device)
                 self.optimizer.zero_grad()
@@ -52,25 +52,37 @@ class DoTraining:
 
         return train_loss, train_acc
 
-    def Forward_eval(self, dataset, test=False):
+    def Forward_eval(self, dataloader, test=False):
         self.model.eval()
         eval_loss = 0.0
         correct = 0
         total = 0
 
         with torch.no_grad():
-            for images, labels in dataset:
-                images, labels = images.to(self.device), labels.to(self.device)
+            if "MyResNet34" in str(self.model.named_modules):
+                for images, labels in tqdm.tqdm(dataloader, desc="eval"):
+                    images, labels = images.to(self.device), labels.to(self.device)
 
-                outputs = self.model(images)
-                loss = self.criterion(outputs, labels)
+                    outputs = self.model(images)
+                    loss = self.criterion(outputs, labels)
 
-                eval_loss += loss.item()
-                _, predicted = outputs.max(1)
-                total += labels.size(0)
-                correct += predicted.eq(labels).sum().item()
+                    eval_loss += loss.item()
+                    _, predicted = outputs.max(1)
+                    total += labels.size(0)
+                    correct += predicted.eq(labels).sum().item()
+            else:
+                for images, labels in dataloader:
+                    images, labels = images.to(self.device), labels.to(self.device)
 
-        eval_loss /= len(dataset)
+                    outputs = self.model(images)
+                    loss = self.criterion(outputs, labels)
+
+                    eval_loss += loss.item()
+                    _, predicted = outputs.max(1)
+                    total += labels.size(0)
+                    correct += predicted.eq(labels).sum().item()
+
+        eval_loss /= len(dataloader)
         eval_acc = correct / total
 
         return eval_loss, eval_acc
