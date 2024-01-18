@@ -1,7 +1,4 @@
 import copy
-import torch
-from torch import nn
-import torch.nn.functional as F
 from torch.utils.data import DataLoader, random_split
 from torchvision import datasets
 from torchvision.transforms.v2 import (
@@ -12,25 +9,9 @@ from torchvision.transforms.v2 import (
     RandomShortestSize,
     AutoAugment,
     Normalize,
-    TenCrop,
     CenterCrop,
-    Pad,
-    Resize,
 )
 from torchvision.transforms.autoaugment import AutoAugmentPolicy
-
-
-class Submean(torch.nn.Module):
-    # Subtract the mean from each pixel along each channel
-    def __init__(self):
-        super().__init__()
-        return None
-
-    def __call__(self, tensor):
-        _mean = tensor.mean(axis=(1, 2))
-        tensor = tensor - _mean[:, None, None]
-
-        return tensor
 
 
 class LoadDataset:
@@ -65,10 +46,7 @@ class LoadDataset:
                 - ToTensor(),
                 - Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True),
             - test (10-croped valid set):
-                ToTensor(),
-                TenCrop()
-                ...
-                ...
+                - Define another location. Find [/src/Prediction_for_MultiScaleTest.ipynb]
     output :
         - self.train_data
         - self.valid_data (default : None)
@@ -167,7 +145,6 @@ class LoadDataset:
                     ]
                 ),
             )
-            """논문에 제시된 in testing, 10crop + 멀티스케일"""
             self.valid_data = datasets.ImageFolder(
                 root=self.ImageNetRoot + "val",
                 transform=Compose(
@@ -182,49 +159,7 @@ class LoadDataset:
                     ]
                 ),
             )
-            """
-            각 지정된 스케일에 따라 10 crop해야하는데, 5개 scale들의 평균을 내야하니까 좀 번거로움.
-            그치만, 학습 중엔 center crop으로 eval하니, 지금 당장 필요하지는 않음.
-            """
-            # self.test_data = datasets.ImageFolder(
-            #     root=self.ImageNetRoot + "val",
-            #     transform=Compose(
-            #         [
-            #             RandomShortestSize(
-            #                 min_size=range[224, 256, 384, 480, 640], antialias=True
-            #             ),
-            #             TenCrop(size=368),
-            #             ToTensor(),
-            #             Normalize(
-            #                 mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True
-            #             ),
-            #         ]
-            #     ),
-            # )
             self.test_data = None
-            # tmp = [None, None, None, None, None]
-            # tmp[0], tmp[1], tmp[2], tmp[3], tmp[4] = random_split(
-            #     ref_test_data, [0.2, 0.2, 0.2, 0.2, 0.2]
-            # )
-            # self.test_data = torch.utils.data.ConcatDataset([tmp])
-
-            # scale = [224, 256, 384, 480, 640]
-            # for i in range(len(tmp)):
-            #     self.test_data.datasets[i].transform = copy.deepcopy(
-            #         ref_test_data.transform
-            #     )
-            #     self.test_data.datasets[i].transform.transforms.append(
-            #         RandomShortestSize(min_size=scale[i], antialias=True)
-            #     )
-            #     self.test_data.datasets[i].transform.transforms.append(
-            #         Pad(padding=int(scale[i] / 8), padding_mode="constant")
-            #     )
-            #     self.test_data.datasets[i].transform.transforms.append(
-            #         TenCrop(size=scale[i])
-            #     )
-
-            #     self.test_data.datasets[i].classes = self.train_data.classes
-            #     self.test_data.datasets[i].class_to_idx = self.train_data.class_to_idx
 
         else:
             raise ValueError(f"Unsupported dataset: {self.dataset_name}")
