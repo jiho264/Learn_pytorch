@@ -216,15 +216,19 @@
     # 10-croped valid set
     scales = [224, 256, 384, 480, 640]
     test  = Compose(
-        RandomShortestSize(min_size=scale, antialias=True)
-        TenCrop(size=scale)
+        RandomShortestSize(min_size=scale[i], antialias=True)
+        TenCrop(size=scale[i])
         ToTensor()
         Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True)
     )
     ``` 
     ``` 
-    [Epoch ㅁㄴㅇㄹ/1000] :
-    ㅁㄴㅇㄹ
+    [Epoch 12/1000] :
+    train: 100%|██████████| 5005/5005 [23:48<00:00,  3.50it/s]
+    Train Loss: 0.0006 | Train Acc: 44.76%
+    eval: 100%|██████████| 196/196 [01:19<00:00,  2.47it/s]
+    Valid Loss: 2.5680 | Valid Acc: 47.00%
+    updated best eval loss : 2.5679544417225584
     ```
 # 3. Training Log
 - ImageNet2012
