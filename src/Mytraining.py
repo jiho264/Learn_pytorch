@@ -66,6 +66,7 @@ class DoTraining:
                     outputs = self.model(images)
                     loss = self.criterion(outputs, labels)
 
+<<<<<<< HEAD
                     eval_loss += loss.item()
                     _, predicted = outputs.max(1)
                     total += labels.size(0)
@@ -87,6 +88,18 @@ class DoTraining:
 
         return eval_loss, eval_acc
 
+=======
+                eval_loss += loss.item()
+                _, predicted = outputs.max(1)
+                total += labels.size(0)
+                correct += predicted.eq(labels).sum().item()
+
+        eval_loss /= len(dataset)
+        eval_acc = correct / total
+
+        return eval_loss, eval_acc
+
+>>>>>>> f12fac777247752d2004c05b6c9978eeae307ff0
     def Save(self):
         checkpoint = {
             "model": self.model.state_dict(),
@@ -106,7 +119,11 @@ class DoTraining:
         self, train_dataloader, valid_dataloader=None, test_dataloader=None
     ):
         if valid_dataloader == None and test_dataloader == None:
+<<<<<<< HEAD
             raise ValueError("No any valid/test dataloader")
+=======
+            raise ValueError("No valid/test dataset")
+>>>>>>> f12fac777247752d2004c05b6c9978eeae307ff0
 
         train_loss, train_acc = self.Forward_train(train_dataloader)
         self.logs["train_loss"].append(train_loss)

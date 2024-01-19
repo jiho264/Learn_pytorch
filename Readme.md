@@ -191,7 +191,11 @@
     > test_acc: 93.30%
     > test_error: 6.70%
     
+<<<<<<< HEAD
   - **MyResNet34_ImageNet_256_SGD** - [doing now]
+=======
+  - **MyResNet34_ImageNet_256_SGD** - not yet
+>>>>>>> f12fac777247752d2004c05b6c9978eeae307ff0
     ```py
     batch = 256
     split_ratio = 0    
@@ -214,6 +218,7 @@
         Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True),
     )
     # 10-croped valid set
+<<<<<<< HEAD
     scales = [224, 256, 384, 480, 640]
     valid  = Compose(
         RandomShortestSize(min_size=scale[i], antialias=True)
@@ -229,6 +234,16 @@
     eval: 100%|██████████| 196/196 [01:19<00:00,  2.47it/s]
     Valid Loss: 2.5680 | Valid Acc: 47.00%
     updated best eval loss : 2.5679544417225584
+=======
+    test  = Compose(
+        ToTensor(),
+        TenCrop()
+    )
+    ``` 
+    ``` 
+    [Epoch ㅁㄴㅇㄹ/1000] :
+    ㅁㄴㅇㄹ
+>>>>>>> f12fac777247752d2004c05b6c9978eeae307ff0
     ```
 # 3. Training Log
 - ImageNet2012

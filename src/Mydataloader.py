@@ -9,11 +9,34 @@ from torchvision.transforms.v2 import (
     RandomShortestSize,
     AutoAugment,
     Normalize,
+<<<<<<< HEAD
     CenterCrop,
+=======
+    TenCrop,
+    CenterCrop,
+    Pad,
+    Resize,
+>>>>>>> f12fac777247752d2004c05b6c9978eeae307ff0
 )
 from torchvision.transforms.autoaugment import AutoAugmentPolicy
 
 
+<<<<<<< HEAD
+=======
+class Submean(torch.nn.Module):
+    # Subtract the mean from each pixel along each channel
+    def __init__(self):
+        super().__init__()
+        return None
+
+    def __call__(self, tensor):
+        _mean = tensor.mean(axis=(1, 2))
+        tensor = tensor - _mean[:, None, None]
+
+        return tensor
+
+
+>>>>>>> f12fac777247752d2004c05b6c9978eeae307ff0
 class LoadDataset:
     """
     input :
@@ -46,7 +69,14 @@ class LoadDataset:
                 - ToTensor(),
                 - Normalize(mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True),
             - test (10-croped valid set):
+<<<<<<< HEAD
                 - Define another location. Find [/src/Prediction_for_MultiScaleTest.ipynb]
+=======
+                ToTensor(),
+                TenCrop()
+                ...
+                ...
+>>>>>>> f12fac777247752d2004c05b6c9978eeae307ff0
     output :
         - self.train_data
         - self.valid_data (default : None)
@@ -100,6 +130,7 @@ class LoadDataset:
                 download=False,
                 transform=ToTensor(),
             )
+<<<<<<< HEAD
 
             if self.split_ratio != 0:
                 # Split to train and valid set
@@ -116,6 +147,24 @@ class LoadDataset:
                 self.train_data.classes = ref_train.classes
                 self.valid_data.classes = ref_train.classes
 
+=======
+
+            if self.split_ratio != 0:
+                # Split to train and valid set
+                total_length = len(ref_train)
+                train_length = int(total_length * self.split_ratio)
+                valid_length = total_length - train_length
+                self.train_data, self.valid_data = random_split(
+                    ref_train, [train_length, valid_length]
+                )
+                # Apply transform at each dataset
+                self.train_data.transform = copy.deepcopy(cifar_default_transforms)
+                self.valid_data.transform = ToTensor()
+
+                self.train_data.classes = ref_train.classes
+                self.valid_data.classes = ref_train.classes
+
+>>>>>>> f12fac777247752d2004c05b6c9978eeae307ff0
                 self.train_data.class_to_idx = ref_train.class_to_idx
                 self.valid_data.class_to_idx = ref_train.class_to_idx
 
@@ -134,7 +183,13 @@ class LoadDataset:
                 root=self.ImageNetRoot + "train",
                 transform=Compose(
                     [
+<<<<<<< HEAD
                         RandomShortestSize(min_size=range(256, 480), antialias=True),
+=======
+                        RandomShortestSize(
+                            min_size=range(256, 480), antialias=True
+                        ),  # 만약 이거보다 작으면 적용 안 된 작은 사이즈
+>>>>>>> f12fac777247752d2004c05b6c9978eeae307ff0
                         RandomCrop(size=224),
                         AutoAugment(policy=AutoAugmentPolicy.IMAGENET),
                         RandomHorizontalFlip(self.Randp),
@@ -145,11 +200,18 @@ class LoadDataset:
                     ]
                 ),
             )
+            """논문에 제시된 in testing, 10crop + 멀티스케일"""
             self.valid_data = datasets.ImageFolder(
                 root=self.ImageNetRoot + "val",
                 transform=Compose(
                     [
+<<<<<<< HEAD
                         RandomShortestSize(min_size=range(256, 480), antialias=True),
+=======
+                        RandomShortestSize(
+                            min_size=range(256, 480), antialias=True
+                        ),  # 만약 이거보다 작으면 적용 안 된 작은 사이즈
+>>>>>>> f12fac777247752d2004c05b6c9978eeae307ff0
                         # VGG에서 single scale로 했을 때는 두 range의 median 값으로 crop함.
                         CenterCrop(size=368),
                         ToTensor(),
@@ -159,7 +221,53 @@ class LoadDataset:
                     ]
                 ),
             )
+<<<<<<< HEAD
             self.test_data = None
+=======
+            """
+            각 지정된 스케일에 따라 10 crop해야하는데, 5개 scale들의 평균을 내야하니까 좀 번거로움.
+            그치만, 학습 중엔 center crop으로 eval하니, 지금 당장 필요하지는 않음.
+            """
+            # self.test_data = datasets.ImageFolder(
+            #     root=self.ImageNetRoot + "val",
+            #     transform=Compose(
+            #         [
+            #             RandomShortestSize(
+            #                 min_size=range[224, 256, 384, 480, 640], antialias=True
+            #             ),
+            #             TenCrop(size=368),
+            #             ToTensor(),
+            #             Normalize(
+            #                 mean=[0.485, 0.456, 0.406], std=[1, 1, 1], inplace=True
+            #             ),
+            #         ]
+            #     ),
+            # )
+            self.test_data = None
+            # tmp = [None, None, None, None, None]
+            # tmp[0], tmp[1], tmp[2], tmp[3], tmp[4] = random_split(
+            #     ref_test_data, [0.2, 0.2, 0.2, 0.2, 0.2]
+            # )
+            # self.test_data = torch.utils.data.ConcatDataset([tmp])
+
+            # scale = [224, 256, 384, 480, 640]
+            # for i in range(len(tmp)):
+            #     self.test_data.datasets[i].transform = copy.deepcopy(
+            #         ref_test_data.transform
+            #     )
+            #     self.test_data.datasets[i].transform.transforms.append(
+            #         RandomShortestSize(min_size=scale[i], antialias=True)
+            #     )
+            #     self.test_data.datasets[i].transform.transforms.append(
+            #         Pad(padding=int(scale[i] / 8), padding_mode="constant")
+            #     )
+            #     self.test_data.datasets[i].transform.transforms.append(
+            #         TenCrop(size=scale[i])
+            #     )
+
+            #     self.test_data.datasets[i].classes = self.train_data.classes
+            #     self.test_data.datasets[i].class_to_idx = self.train_data.class_to_idx
+>>>>>>> f12fac777247752d2004c05b6c9978eeae307ff0
 
         else:
             raise ValueError(f"Unsupported dataset: {self.dataset_name}")
